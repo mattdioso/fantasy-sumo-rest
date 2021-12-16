@@ -9,7 +9,6 @@ export class MatchEntity {
 
     @Column()
     @ManyToOne(() => WrestlerEntity, idWrestler1 => idWrestler1.id)
-    @JoinColumn()
     idWrestler1: string;
 
     @Column()
@@ -20,7 +19,6 @@ export class MatchEntity {
 
     @Column()
     @ManyToOne(() => WrestlerEntity, idWrestler2 => idWrestler2.id)
-    @JoinColumn()
     idWrestler2: string;
     
     @Column()
@@ -30,7 +28,6 @@ export class MatchEntity {
     winByForfeit2: number;
 
     @ManyToOne(() => TechniqueEntity, winTechnique => winTechnique.id)
-    @JoinColumn()
     winTechnique: string;
 
     @Column()

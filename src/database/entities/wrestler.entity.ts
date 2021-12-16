@@ -9,7 +9,8 @@ export class WrestlerEntity {
     @Column({
         type: "varchar",
         length: 45,
-        nullable: false
+        nullable: false,
+        unique: true
     })
     ringname: string;
 

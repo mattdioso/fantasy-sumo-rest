@@ -7,6 +7,8 @@ import * as dotenv from 'dotenv';
 import { TechniqueController } from './controller/techniques.controller';
 import { MatchController } from './controller/matches.controller';
 import { RankingsController } from './controller/rankings.controller';
+import { TournamentController } from './controller/tournament.controller';
+import { DayController } from './controller/day.controller';
 
 class Server {
     private app: express.Application;
@@ -14,6 +16,8 @@ class Server {
     private techniqueController: TechniqueController;
     private matchesController: MatchController;
     private rankingsController: RankingsController;
+    private tournamentController: TournamentController;
+    private dayController: DayController;
 
     constructor() {
         this.app = express();
@@ -45,10 +49,14 @@ class Server {
         this.techniqueController = new TechniqueController();
         this.matchesController = new MatchController();
         this.rankingsController = new RankingsController();
+        this.tournamentController = new TournamentController();
+        this.dayController = new DayController();
         this.app.use('/api/wrestlers', this.wrestlerController.router);
         this.app.use('/api/techniques', this.techniqueController.router);
         this.app.use('/api/matches', this.matchesController.router);
         this.app.use('/api/rankings', this.rankingsController.router);
+        this.app.use('/api/tournaments', this.tournamentController.router);
+        this.app.use('/api/days', this.dayController.router);
         this.app.get('/', (req: Request, res: Response) => {
             res.send("Hello world!");
         });
