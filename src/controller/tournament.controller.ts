@@ -23,8 +23,16 @@ export class TournamentController {
         res.send(new_tourney).json();
     }
 
+    public update = async (req: Request, res: Response) => {
+        const tournament = req['body'] as TournamentEntity;
+        const id = req['params']['id'];
+        const updated_tourney = await this.tournamentService.update(tournament, id);
+        res.send(updated_tourney).json();
+    }
+
     public routes() {
         this.router.get('/', this.index);
         this.router.post('/', this.create);
+        this.router.put('/:id', this.update);
     }
 }

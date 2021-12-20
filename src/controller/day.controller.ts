@@ -1,5 +1,7 @@
 import { Router, Response, Request } from 'express';
+import { getConnection } from 'typeorm';
 import { DaysEntity } from '../database/entities/day.entity';
+import { MatchEntity } from '../database/entities/matches.entity';
 import { MatchRepository } from '../repository/matches.repository';
 import { DaysService } from '../services/day.service';
 import { MatchService } from '../services/matches.service';
@@ -11,7 +13,7 @@ export class DayController {
 
     constructor() {
         this.dayService = new DaysService();
-        this.matchRepository = new MatchRepository();
+        this.matchRepository = getConnection("sumo").getRepository(MatchEntity);
         this.router = Router();
         this.routes();
     }
@@ -39,6 +41,4 @@ export class DayController {
         this.router.post('/', this.create);
         this.router.put('/:id', this.update);
     }
-
-    
 }

@@ -8,15 +8,20 @@ export class DaysEntity {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
-    @ManyToOne(() => TournamentEntity, (tourney: TournamentEntity) => tourney.id)
+    @ManyToOne(() => TournamentEntity, (tourney: TournamentEntity) => tourney.days)
+    tournament: TournamentEntity;
 
-    tournament_id: string;
+    @Column({
+        type: "int"
+    })
+    day_num: number;
 
-    @OneToMany(() => MatchEntity, (match: MatchEntity)=> match.id, {
+    @OneToMany(() => MatchEntity, (match: MatchEntity)=> match.day, {
         onDelete: "CASCADE",
-        primary: true,
+        cascade: true,
         eager: true
     })
+    @JoinColumn()
     matches: MatchEntity[];
 
 }

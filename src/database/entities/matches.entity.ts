@@ -1,4 +1,5 @@
 import { Column, Entity, OneToOne, PrimaryGeneratedColumn, JoinColumn, ManyToOne } from 'typeorm';
+import { DaysEntity } from './day.entity';
 import { TechniqueEntity } from './techniques.entity';
 import { WrestlerEntity } from './wrestler.entity';
 
@@ -32,4 +33,7 @@ export class MatchEntity {
 
     @Column()
     matchNum: number;
+
+    @ManyToOne(()=> DaysEntity, (day: DaysEntity) => day.matches)
+    day: DaysEntity
 }

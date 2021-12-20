@@ -55,7 +55,7 @@ def scrape_sumo_info(uri, name):
   }
 
   response = requests.post('http://localhost:3000/api/wrestlers', json=post_data)
-  download_avatar(img_uri, name)
+  #download_avatar(img_uri, name)
 
 if not os.path.exists('./sumo_pics'):
   os.makedirs('./sumo_pics')

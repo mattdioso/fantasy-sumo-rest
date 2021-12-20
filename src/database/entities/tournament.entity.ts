@@ -53,7 +53,7 @@ export class TournamentEntity {
     })
     banzuke_id: string;
 
-    @OneToMany(() => DaysEntity, (day: DaysEntity) => day.id, {
+    @OneToMany(() => DaysEntity, (day: DaysEntity) => day.tournament, {
         onDelete: "CASCADE",
         primary: true,
         eager: true

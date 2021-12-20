@@ -36,7 +36,7 @@ class Server {
     public async routes() {
         const connection = await createConnection({
             type: "postgres",
-            host: "192.168.0.54",
+            host: "localhost",
             port: 5432,
             username: "matt",
             password: "!Univega1986",
