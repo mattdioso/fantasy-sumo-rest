@@ -33,12 +33,12 @@ export class DaysService {
 
     public update = async (day: DaysEntity, id: string) => {
         for (let i = 0; i < day.matches.length; i++) {
-            let match = day.matches[i];
-            const new_match = await this.match_repository.findOne({ id: match.id });
-            console.log(new_match);
-            day.matches[i] = new_match!;
+            let match = await this.match_repository.findOne({ id: day.matches[i].id });
+            await getConnection("sumo").createQueryBuilder()
+            .relation(DaysEntity, "matches")
+            .of(id)
+            .add(day.matches[i].id);
         }
-        const updated_day = await this.days_repository.update(id, day);
-        return updated_day;
+        return await this.days_repository.findOne({ id: id });
     }
 }

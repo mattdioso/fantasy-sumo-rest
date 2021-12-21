@@ -8,7 +8,7 @@ export class DaysEntity {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
-    @ManyToOne(() => TournamentEntity, (tourney: TournamentEntity) => tourney.days)
+    @ManyToOne(() => TournamentEntity, (tournament: TournamentEntity) => tournament.days)
     tournament: TournamentEntity;
 
     @Column({

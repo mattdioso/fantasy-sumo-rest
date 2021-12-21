@@ -1,13 +1,16 @@
 import { Router, Response, Request } from 'express';
 import { WrestlerEntity } from '../database/entities/wrestler.entity';
+import { SearchService } from '../services/search.service';
 import { WrestlerService } from '../services/wrestler.service';
 
 export class WrestlerController {
     public router: Router;
     private wrestlerService: WrestlerService;
+    private searchService: SearchService;
 
     constructor() {
         this.wrestlerService = new WrestlerService();
+        this.searchService = new SearchService();
         this.router = Router();
         this.routes();
     }
@@ -36,10 +39,17 @@ export class WrestlerController {
         res.send(deleted_wrestler).json();
     }
 
+    public search = async (req: Request, res: Response) => {
+        const search = req['body']['ringname'];
+        let result = await this.searchService.search_wrestler(search);
+        res.send(result).json();
+    }
+
     public routes() {
         this.router.get('/', this.index);
         this.router.post('/', this.create);
         this.router.put('/:id', this.update);
         this.router.delete('/:id', this.delete);
+        this.router.post('/search', this.search);
     }
 }

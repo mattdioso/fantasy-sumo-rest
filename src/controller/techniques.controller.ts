@@ -1,13 +1,16 @@
 import { Router, Response, Request } from 'express';
 import { TechniqueEntity } from '../database/entities/techniques.entity';
+import { SearchService } from '../services/search.service';
 import { TechniqueService } from '../services/techniques.service';
 
 export class TechniqueController {
     public router: Router;
     private techniqueService: TechniqueService;
+    private searchService: SearchService;
 
     constructor() {
         this.techniqueService = new TechniqueService();
+        this.searchService = new SearchService();
         this.router = Router();
         this.routes();
     }
@@ -37,10 +40,17 @@ export class TechniqueController {
         res.send(deleted_technique).json();
     }
 
+    public search = async (req: Request, res: Response) => {
+        const search = req['body']['technique'];
+        let result = await this.searchService.search_technique(search);
+        res.send(result);
+    }
+
     public routes() {
         this.router.get('/', this.index);
         this.router.post('/', this.create);
         this.router.put('/:id', this.update);
         this.router.delete('/:id', this.delete);
+        this.router.post('/search', this.search);
     }
 }

@@ -11,8 +11,8 @@ import json
 #page = requests.get('https://sumowrestling.fandom.com/wiki/Sorite')
 #page = requests.get('https://sumowrestling.fandom.com/wiki/Tokushuwaza')
 #page = requests.get('https://sumowrestling.fandom.com/wiki/Hiwaza')
-#page = requests.get('https://sumowrestling.fandom.com/wiki/Fusensho')
-page = requests.get('https://sumowrestling.fandom.com/wiki/Kinjite')
+page = requests.get('https://sumowrestling.fandom.com/wiki/Fusensho')
+#page = requests.get('https://sumowrestling.fandom.com/wiki/Kinjite')
 soup = BeautifulSoup(page.content, 'html.parser')
 
 headers = soup.find_all(class_="mw-headline")
@@ -23,8 +23,8 @@ for i in range(len(headers)):
   if header_id != 'Match':
     #print(header_id + "\t" + paragraphs[i+1].text)
     post_data = {
-      "techniqueType": header_id,
-      "techniqueDescr": paragraphs[i+1].text.replace('\n', '')
+      "techniquetype": header_id,
+      "techniquedescr": paragraphs[i+1].text.replace('\n', '')
     }
     print(post_data)
     response = requests.post('http://localhost:3000/api/techniques', json=post_data)

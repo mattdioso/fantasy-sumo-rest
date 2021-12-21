@@ -20,7 +20,7 @@ export class MatchController {
     public create = async (req: Request, res: Response) => {
         const match = req['body'] as MatchEntity;
         const new_match = await this.matchService.create(match);
-        res.send(new_match).json();
+        res.send(new_match);
     }
 
     public update = async (req: Request, res: Response) => {

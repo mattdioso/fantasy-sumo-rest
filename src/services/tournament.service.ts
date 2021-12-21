@@ -1,4 +1,4 @@
-import { getConnection, getCustomRepository } from "typeorm";
+import { getConnection, getCustomRepository, QueryBuilder } from "typeorm";
 import { DaysEntity } from "../database/entities/day.entity";
 import { TournamentEntity } from "../database/entities/tournament.entity";
 import { DaysRepository } from "../repository/day.repository";
@@ -31,12 +31,13 @@ export class TournamentService {
     }
 
     public update = async (tourament: TournamentEntity, id: string) => {
-        for (let i = 0; i< tourament.days.length; i++) {
-            let day = tourament.days[i];
-            const new_day = await this.days_repository.findOne({ id: day.id });
-            tourament.days[i] = day!;
+        for (let i = 0 ; i < tourament.days.length; i++) {
+            let day = await this.days_repository.findOne({ id: tourament.days[i].id });
+            await getConnection("sumo").createQueryBuilder()
+                .relation(TournamentEntity, "days")
+                .of(id)
+                .add(tourament.days[i].id);
         }
-        const updated_tourney = await this.tournament_repository.update(id, tourament);
-        return updated_tourney;
+        return await this.tournament_repository.findOne({ id: id });
     }
 }

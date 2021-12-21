@@ -27,6 +27,7 @@ export class TournamentController {
         const tournament = req['body'] as TournamentEntity;
         const id = req['params']['id'];
         const updated_tourney = await this.tournamentService.update(tournament, id);
+        console.log(updated_tourney);
         res.send(updated_tourney).json();
     }
 

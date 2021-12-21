@@ -7,9 +7,13 @@ export class TechniqueEntity {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
-    @Column()
-    techniqueType: string;
+    @Column({
+        type: "varchar",
+        length: 45,
+        nullable: true
+    })
+    techniquetype: string;
 
     @Column()
-    techniqueDescr: string;
+    techniquedescr: string;
 }
