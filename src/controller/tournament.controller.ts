@@ -13,22 +13,36 @@ export class TournamentController {
     }
 
     public index = async(req: Request, res: Response) => {
-        const tournaments = await this.tournamentService.index();
-        res.send(tournaments).json();
+        await this.tournamentService.index().then(tournaments => {
+            return res.send(tournaments);
+        }).catch(err => {
+            return res.sendStatus(500).send({
+                message: err.message || "some error occured"
+            })
+        });
     }
 
     public create = async (req: Request, res: Response) => {
         const tourney = req['body'] as TournamentEntity;
-        const new_tourney = await this.tournamentService.create(tourney);
-        res.send(new_tourney).json();
+        await this.tournamentService.create(tourney).then(new_tourney => {
+            return res.send(new_tourney);
+        }).catch(err => {
+            return res.sendStatus(500).send({
+                message: err.message || "some error occured"
+            })
+        });
     }
 
     public update = async (req: Request, res: Response) => {
         const tournament = req['body'] as TournamentEntity;
         const id = req['params']['id'];
-        const updated_tourney = await this.tournamentService.update(tournament, id);
-        console.log(updated_tourney);
-        res.send(updated_tourney).json();
+        await this.tournamentService.update(tournament, id).then(updated_tourney => {
+            return res.send(updated_tourney);
+        }).catch(err => {
+            return res.sendStatus(500).send({
+                message: err.message || "some error occured"
+            })
+        });
     }
 
     public routes() {

@@ -1,4 +1,5 @@
 import { Router, Response, Request } from 'express';
+import { resourceLimits } from 'worker_threads';
 import { TechniqueEntity } from '../database/entities/techniques.entity';
 import { SearchService } from '../services/search.service';
 import { TechniqueService } from '../services/techniques.service';
@@ -16,34 +17,61 @@ export class TechniqueController {
     }
 
     public index = async (req: Request, res: Response) => {
-        const techniques = await this.techniqueService.index();
-        res.send(techniques).json();
+        const techniques = await this.techniqueService.index().then(techniques => {
+            return res.send(techniques);
+        }).catch(err => {
+            return res.sendStatus(500).send({
+                message: err.message || "some error occured"
+            })
+        });
     }
 
     public create = async (req: Request, res: Response) => {
         const technique = req['body'] as TechniqueEntity;
         console.log(technique);
-        const new_technique = await this.techniqueService.create(technique);
-        res.send(new_technique).json();
+        await this.techniqueService.create(technique).then(created_technique => {
+            return res.send(created_technique);
+        }).catch(err => {
+            return res.sendStatus(500).send({
+                message: err.message || "some error occured"
+            })
+        });
     }
 
     public update = async (req: Request, res: Response) => {
         const technique = req['body'] as TechniqueEntity;
         const id = req['params']['id'];
-        const updated_technique = await this.techniqueService.update(technique, id);
-        res.send(updated_technique).json();
+        await this.techniqueService.update(technique, id).then(updated_technique => {
+            return res.send(updated_technique);
+        }).catch(err => {
+            return res.sendStatus(500).send({
+                message: err.message || "some error occured"
+            })
+        })
     }
 
     public delete = async (req: Request, res: Response) => {
         const id = req['params']['id'];
-        const deleted_technique = await this.techniqueService.delete(id);
-        res.send(deleted_technique).json();
+        await this.techniqueService.delete(id).then(result => {
+            return res.send(result);
+        }).catch(err => {
+            return res.sendStatus(500).send({
+                message: err.message || "some error occured"
+            })
+        });
+        
     }
 
     public search = async (req: Request, res: Response) => {
         const search = req['body']['technique'];
-        let result = await this.searchService.search_technique(search);
-        res.send(result);
+        await this.searchService.search_technique(search).then(result => {
+            return res.send(result);
+        }).catch(err => {
+            return res.sendStatus(500).send({
+                message: err.message || "some error occured"
+            })
+        });
+        
     }
 
     public routes() {

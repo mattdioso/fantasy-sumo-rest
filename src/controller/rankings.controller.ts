@@ -13,8 +13,13 @@ export class RankingsController {
     }
 
     public index = async(req: Request, res: Response) => {
-        const rankings = await this.rankingService.index();
-        res.send(rankings).json();
+        await this.rankingService.index().then(rankings => {
+            return res.send(rankings);
+        }).catch(err => {
+            return res.sendStatus(500).send({
+                message: err.message || "some error occured"
+            })
+        });
     }
 
     public routes() {

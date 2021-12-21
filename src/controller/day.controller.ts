@@ -19,21 +19,37 @@ export class DayController {
     }
 
     public index = async (req: Request, res: Response) => {
-        const days = await this.dayService.index();
-        res.send(days).json();
+       await this.dayService.index().then(days => {
+           return res.send(days);
+       }).catch(err => {
+           return res.sendStatus(500).send({
+               message: err.message || "some error occured"
+           })
+       });
     }
 
     public create = async (req: Request, res: Response) => {
         const day = req['body'] as DaysEntity;
-        const new_day = await this.dayService.create(day);
-        res.send(new_day).json();
+        await this.dayService.create(day).then(new_day => {
+            return res.send(new_day);
+        }).catch(err => {
+            return res.sendStatus(500).send({
+                message: err.message || "some error occured"
+            })
+        });
     }
 
     public update = async (req: Request, res: Response) => {
         const day = req['body'] as DaysEntity;
         const id = req['params']['id'];
-        const updated_day = await this.dayService.update(day, id);
-        res.send(updated_day).json();
+        await this.dayService.update(day, id).then(updated_day => {
+            return res.send(updated_day);
+        }).catch(err => {
+            return res.sendStatus(500).send({
+                message: err.message || "some error occured"
+            })
+        })
+
     }
 
     public routes() {

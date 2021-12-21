@@ -13,8 +13,14 @@ export class MatchController {
     }
 
     public index = async(req: Request, res: Response) => {
-        const matches = await this.matchService.index();
-        res.send(matches).json();
+        await this.matchService.index().then(result => {
+            return res.send(result);
+        }).catch(err => {
+            return res.sendStatus(500).send({
+                message: err.message || "some error occured on the server"
+            })
+        });
+        
     }
 
     public create = async (req: Request, res: Response) => {

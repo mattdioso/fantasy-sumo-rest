@@ -16,33 +16,63 @@ export class WrestlerController {
     }
 
     public index = async ( req: Request, res: Response) => {
-        const wrestlers = await this.wrestlerService.index();
-        res.send(wrestlers).json();
+        await this.wrestlerService.index().then(wrestlers => {
+            return res.send(wrestlers);
+        }).catch(err => {
+            return res.sendStatus(500).send({
+                message: err.message || "some error occured"
+            })
+        });
+        
     }
 
     public create = async (req: Request, res: Response) => {
         const wrestler = req['body'] as WrestlerEntity;
-        const new_wrestler = await this.wrestlerService.create(wrestler);
-        res.send(new_wrestler).json();
+        await this.wrestlerService.create(wrestler).then(new_wrestler => {
+            return res.send(new_wrestler);
+        }).catch(err => {
+            return res.sendStatus(500).send({
+                message: err.message || "some error occured"
+            })
+        });
+        
     }
 
     public update = async (req: Request, res: Response) => {
         const wrestler = req['body'] as WrestlerEntity;
         const id = req['params']['id'];
-        const updated_wrestler = await this.wrestlerService.update(wrestler, id);
-        res.send(updated_wrestler).json();
+        await this.wrestlerService.update(wrestler, id).then(updated_wrestler => {
+            return res.send(updated_wrestler);
+        }).catch(err => {
+            return res.sendStatus(500).send({
+                message: err.message || "some error occured"
+            })
+        });
+        
     }
 
     public delete = async (req: Request, res: Response) => {
         const id = req['params']['id'];
-        const deleted_wrestler = await this.wrestlerService.delete(id);
-        res.send(deleted_wrestler).json();
+        await this.wrestlerService.delete(id).then(result => {
+            return res.send(result);
+        }).catch(err => {
+            return res.sendStatus(500).send({
+                message: err.message || "some error occured"
+            })
+        });
+        
     }
 
     public search = async (req: Request, res: Response) => {
         const search = req['body']['ringname'];
-        let result = await this.searchService.search_wrestler(search);
-        res.send(result).json();
+        await this.searchService.search_wrestler(search).then(result => {
+            return res.send(result);
+        }).catch(err => {
+            return res.sendStatus(500).send({
+                message: err.message || "some error occured"
+            })
+        });
+        
     }
 
     public routes() {
