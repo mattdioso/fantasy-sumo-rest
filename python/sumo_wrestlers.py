@@ -55,7 +55,7 @@ def scrape_sumo_info(uri, name):
   }
 
   response = requests.post('http://localhost:3000/api/wrestlers', json=post_data)
-  #download_avatar(img_uri, name)
+  download_avatar(img_uri, name)
 
 if not os.path.exists('./sumo_pics'):
   os.makedirs('./sumo_pics')
@@ -69,10 +69,13 @@ sumo_headers = {
   "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36"
 }
 
+"""
+kakuzuke_id=1 for Makuuchi Division, kakuzuke_id=2 for Juryo Division
+"""
 sumo_data = {
   "p": 1,
   "v": 50,
-  "kakuzuke_id": 1
+  "kakuzuke_id": 2
 }
 
 base_url = "https://sumo.or.jp"
