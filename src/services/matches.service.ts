@@ -14,6 +14,11 @@ export class MatchService {
         return matches;
     }
 
+    public get_match = async(id: string) => {
+        let match = await this.match_repository.findOne(id);
+        return match;
+    }
+
     public create = async (match: MatchEntity) => {
         const new_match = await this.match_repository.create(match);
         await this.match_repository.save(new_match);

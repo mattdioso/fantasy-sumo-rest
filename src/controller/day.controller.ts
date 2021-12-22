@@ -28,6 +28,17 @@ export class DayController {
        });
     }
 
+    public get_day = async (req: Request, res: Response) => {
+        let id = req['params']['id'];
+        await this.dayService.get_day(id).then(result => {
+            return res.send(result);
+        }).catch(err => {
+            return res.sendStatus(500).send({
+                message: err.message || "some error occured"
+            })
+        });
+    }
+
     public create = async (req: Request, res: Response) => {
         const day = req['body'] as DaysEntity;
         await this.dayService.create(day).then(new_day => {
@@ -54,6 +65,7 @@ export class DayController {
 
     public routes() {
         this.router.get('/', this.index);
+        this.router.get('/:id', this.get_day);
         this.router.post('/', this.create);
         this.router.put('/:id', this.update);
     }

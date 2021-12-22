@@ -22,8 +22,18 @@ export class WrestlerController {
             return res.sendStatus(500).send({
                 message: err.message || "some error occured"
             })
+        });   
+    }
+
+    public get_wrestler = async (req: Request, res: Response) => {
+        let id = req['params']['id'];
+        await this.wrestlerService.get_wrestler(id).then(wrestler => {
+            return res.send(wrestler);
+        }) .catch(err => {
+            return res.sendStatus(500).send({
+                message: err.message || "some error occured"
+            })
         });
-        
     }
 
     public create = async (req: Request, res: Response) => {
@@ -77,6 +87,7 @@ export class WrestlerController {
 
     public routes() {
         this.router.get('/', this.index);
+        this.router.get('/:id', this.get_wrestler);
         this.router.post('/', this.create);
         this.router.put('/:id', this.update);
         this.router.delete('/:id', this.delete);

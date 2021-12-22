@@ -15,6 +15,11 @@ export class WrestlerService {
         return wrestlers;
     }
 
+    public get_wrestler = async (id: string) => {
+        let wrestler = await this.wrestler_repository.findOne(id);
+        return wrestler;
+    }
+
     public create = async (wrestler: WrestlerEntity) => {
         const new_wrestler = await this.wrestler_repository.create(wrestler);
         const results = await this.wrestler_repository.save(new_wrestler);

@@ -26,6 +26,17 @@ export class TechniqueController {
         });
     }
 
+    public get_technique = async (req: Request, res: Response) => {
+        let id = req['params']['id'];
+        await this.techniqueService.get_technique(id).then(result => {
+            return res.send(result);
+        }).catch(err => {
+            return res.sendStatus(500).send({
+                message: err.message || "some error occured"
+            })
+        });
+    }
+
     public create = async (req: Request, res: Response) => {
         const technique = req['body'] as TechniqueEntity;
         console.log(technique);
@@ -76,6 +87,7 @@ export class TechniqueController {
 
     public routes() {
         this.router.get('/', this.index);
+        this.router.get('/:id', this.get_technique);
         this.router.post('/', this.create);
         this.router.put('/:id', this.update);
         this.router.delete('/:id', this.delete);

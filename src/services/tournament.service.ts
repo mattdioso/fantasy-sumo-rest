@@ -18,6 +18,11 @@ export class TournamentService {
         return tournaments;
     }
 
+    public get_tournament = async(id: string) => {
+        let tournament = await this.tournament_repository.findOne(id);
+        return tournament;
+    }
+
     public create = async (tournament: TournamentEntity) => {
         const new_tourney = await this.tournament_repository.create(tournament);
         let days = tournament.days;

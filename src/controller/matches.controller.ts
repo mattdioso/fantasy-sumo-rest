@@ -23,6 +23,17 @@ export class MatchController {
         
     }
 
+    public get_match = async(req: Request, res: Response) => {
+        let id = req['params']['id'];
+        await this.matchService.get_match(id).then(result => {
+            return res.send(result);
+        }).catch(err => {
+            return res.sendStatus(500).send({
+                message: err.message || "some error occured"
+            })
+        });
+    }
+
     public create = async (req: Request, res: Response) => {
         const match = req['body'] as MatchEntity;
         const new_match = await this.matchService.create(match);
@@ -44,6 +55,7 @@ export class MatchController {
 
     public routes() {
         this.router.get('/', this.index);
+        this.router.get('/:id', this.get_match);
         this.router.post('/', this.create);
         this.router.put('/:id', this.update);
         this.router.delete('/:id', this.delete);

@@ -22,6 +22,17 @@ export class TournamentController {
         });
     }
 
+    public get_tournaent = async(req: Request, res: Response) => {
+        let id = req['params']['id'];
+        await this.tournamentService.get_tournament(id).then(tournament => {
+            return res.send(tournament);
+        }).catch(err => {
+            return res.sendStatus(500).send({
+                message: err.message || "some error occured"
+            })
+        });
+    }
+
     public create = async (req: Request, res: Response) => {
         const tourney = req['body'] as TournamentEntity;
         await this.tournamentService.create(tourney).then(new_tourney => {
@@ -47,6 +58,7 @@ export class TournamentController {
 
     public routes() {
         this.router.get('/', this.index);
+        this.router.get('/:id', this.get_tournaent);
         this.router.post('/', this.create);
         this.router.put('/:id', this.update);
     }

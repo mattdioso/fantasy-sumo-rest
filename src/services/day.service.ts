@@ -18,6 +18,11 @@ export class DaysService {
         return days;
     }
 
+    public get_day = async(id: string) => {
+        let day = await this.days_repository.findOne(id);
+        return day;
+    }
+
     public create = async (day: DaysEntity) => {
         const new_day = await this.days_repository.create(day);
         let matches = day.matches;

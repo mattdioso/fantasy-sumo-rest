@@ -14,6 +14,11 @@ export class TechniqueService {
         return techniques;
     }
 
+    public get_technique = async(id: string) => {
+        let technique = await this.technique_repository.findOne(id);
+        return technique;
+    }
+
     public create = async (technique: TechniqueEntity) => {
         const new_technique = await this.technique_repository.create(technique);
         await this.technique_repository.save(new_technique);
