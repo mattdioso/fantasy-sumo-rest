@@ -28,9 +28,10 @@ class Server {
     }
 
     public configuration() {
-        this.app.set('port', process.env.PORT || 3000);
+        this.app.set('port', process.env.PORT || 5000);
         this.app.use(express.json());
-        
+        var cors = require('cors');
+        this.app.use(cors());
     }
 
     public async routes() {

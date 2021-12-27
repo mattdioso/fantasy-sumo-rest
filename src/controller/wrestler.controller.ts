@@ -2,6 +2,7 @@ import { Router, Response, Request } from 'express';
 import { WrestlerEntity } from '../database/entities/wrestler.entity';
 import { SearchService } from '../services/search.service';
 import { WrestlerService } from '../services/wrestler.service';
+import { resolve } from 'path';
 
 export class WrestlerController {
     public router: Router;
@@ -85,9 +86,23 @@ export class WrestlerController {
         
     }
 
+    public avatar = async (req: Request, res: Response) => {
+        const id = req['params']['id'];
+        await this.wrestlerService.get_wrestler(id).then(wrestler => {
+            let path = resolve(__dirname + `/../../python/sumo_pics/${wrestler!.ringname}.jpg`);
+            return res.sendFile(path);
+        
+        }).catch(err => {
+            return res.sendStatus(500).send({
+                message: err.message || "some error occured"
+            })
+        });
+    }
+
     public routes() {
         this.router.get('/', this.index);
         this.router.get('/:id', this.get_wrestler);
+        this.router.get('/:id/avatar', this.avatar);
         this.router.post('/', this.create);
         this.router.put('/:id', this.update);
         this.router.delete('/:id', this.delete);
