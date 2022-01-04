@@ -28,8 +28,9 @@ export class MatchEntity {
     @Column()
     winByForfeit2: number;
 
+    @Column()
     @ManyToOne(() => TechniqueEntity, winTechnique => winTechnique.id)
-    winTechnique: string;
+    winTechniqueId: string;
 
     @Column()
     matchNum: number;

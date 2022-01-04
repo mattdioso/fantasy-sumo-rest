@@ -10,14 +10,13 @@ export class WrestlerService {
     }
 
     public index = async () => {
-        const wrestlers = await this.wrestler_repository.find();
-        console.log(wrestlers);
-        return wrestlers;
+        return await this.wrestler_repository.find();
+        
     }
 
     public get_wrestler = async (id: string) => {
-        let wrestler = await this.wrestler_repository.findOne(id);
-        return wrestler;
+        return await this.wrestler_repository.findOne(id);
+        
     }
 
     public create = async (wrestler: WrestlerEntity) => {
@@ -28,8 +27,9 @@ export class WrestlerService {
     }
 
     public update = async (wrestler: WrestlerEntity, id: string) => {
-        const updated_wrestler = await this.wrestler_repository.update(id, wrestler);
-        return updated_wrestler;
+        await this.wrestler_repository.update(id, wrestler).then(updated_wrestler => {
+            return updated_wrestler;
+        })
     }
 
     public delete = async (id: string) => {

@@ -10,13 +10,12 @@ export class TechniqueService {
     }
 
     public index = async() => {
-        const techniques = await this.technique_repository.find();
-        return techniques;
+        return await this.technique_repository.find()
+        
     }
 
     public get_technique = async(id: string) => {
-        let technique = await this.technique_repository.findOne(id);
-        return technique;
+        return await this.technique_repository.findOne(id)
     }
 
     public create = async (technique: TechniqueEntity) => {
