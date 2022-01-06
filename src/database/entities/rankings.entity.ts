@@ -1,4 +1,5 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { TournamentEntity } from "./tournament.entity";
 import { WrestlerEntity } from "./wrestler.entity";
 
 @Entity('rankings')
@@ -8,16 +9,22 @@ export class RankingsEntity {
     id: string;
 
     @Column()
-    rankName: string;
+    rank: string;
 
     @Column()
-    rankNumber: string;
+    @ManyToOne(() => TournamentEntity, idTournament => idTournament.id)
+    idTournament: string;
 
     @Column()
-    rankCardinal: string;
+    wins: number;
+
+    @Column()
+    losses: number;
+
+    @Column()
+    division: string;
 
     @Column()
     @OneToOne(() => WrestlerEntity, (wrestler: WrestlerEntity) => wrestler.id)
-    @JoinColumn()
     idWrestler: string;
 }
