@@ -9,8 +9,8 @@ export class SearchService {
     private technique_repository: TechniqueRepository;
 
     constructor() {
-        this.wrestler_repository = getConnection("sumo").getRepository(WrestlerEntity);
-        this.technique_repository = getConnection("sumo").getRepository(TechniqueEntity);
+        this.wrestler_repository = getConnection("default").getRepository(WrestlerEntity);
+        this.technique_repository = getConnection("default").getRepository(TechniqueEntity);
     }
 
     public search_wrestler = async(wrestler: string) => {

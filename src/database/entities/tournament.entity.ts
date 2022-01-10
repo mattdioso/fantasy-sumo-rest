@@ -1,5 +1,6 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { DaysEntity } from "./day.entity";
+import { TeamEntity } from "./team.entity";
 
 @Entity('tournaments')
 export class TournamentEntity {
@@ -60,4 +61,10 @@ export class TournamentEntity {
     })
     @JoinColumn()
     days: DaysEntity[];
+
+    // @OneToMany(() => TeamEntity, (team: TeamEntity) => team.tournament, {
+    //     onDelete: "CASCADE",
+    //     cascade: true
+    // })
+    // teams: TeamEntity[];
 }

@@ -7,7 +7,7 @@ export class RankingsService {
     private rankings_repository: RankingsRepository;
 
     constructor() {
-        this.rankings_repository = getConnection("sumo").getRepository(RankingsEntity);
+        this.rankings_repository = getConnection("default").getRepository(RankingsEntity);
     }
 
     public index = async() => {

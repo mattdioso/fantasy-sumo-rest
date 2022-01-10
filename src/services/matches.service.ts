@@ -6,7 +6,7 @@ export class MatchService {
     private match_repository: MatchRepository;
 
     constructor() {
-        this.match_repository = getConnection("sumo").getRepository(MatchEntity);
+        this.match_repository = getConnection("default").getRepository(MatchEntity);
     }
 
     public index = async() => {

@@ -6,7 +6,7 @@ export class WrestlerService {
     private wrestler_repository: WrestlerRepository;
 
     constructor() {
-        this.wrestler_repository = getConnection("sumo").getRepository(WrestlerEntity);
+        this.wrestler_repository = getConnection("default").getRepository(WrestlerEntity);
     }
 
     public index = async () => {

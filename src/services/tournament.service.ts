@@ -9,8 +9,8 @@ export class TournamentService {
     private days_repository: DaysRepository;
 
     constructor() {
-        this.tournament_repository = getConnection("sumo").getRepository(TournamentEntity);
-        this.days_repository = getConnection("sumo").getRepository(DaysEntity);
+        this.tournament_repository = getConnection("default").getRepository(TournamentEntity);
+        this.days_repository = getConnection("default").getRepository(DaysEntity);
     }
 
     public index = async() => {
@@ -38,7 +38,7 @@ export class TournamentService {
     public update = async (tourament: TournamentEntity, id: string) => {
         for (let i = 0 ; i < tourament.days.length; i++) {
             let day = await this.days_repository.findOne({ id: tourament.days[i].id });
-            await getConnection("sumo").createQueryBuilder()
+            await getConnection("default").createQueryBuilder()
                 .relation(TournamentEntity, "days")
                 .of(id)
                 .add(tourament.days[i].id);

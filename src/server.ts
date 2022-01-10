@@ -35,17 +35,22 @@ class Server {
     }
 
     public async routes() {
-        const connection = await createConnection({
-            type: "postgres",
-            host: "localhost",
-            port: 5432,
-            username: "matt",
-            password: "!Univega1986",
-            database: "sumo",
-            entities: [__dirname + "/database/entities/**/*{.ts,.js}"],
-            synchronize: true,
-            name: "sumo"
-        });
+        // const connection = await createConnection({
+        //     type: "postgres",
+        //     host: "localhost",
+        //     port: 5432,
+        //     username: "matt",
+        //     password: "!Univega1986",
+        //     database: "sumo",
+        //     entities: [__dirname + "/database/entities/**/*{.ts,.js}"],
+        //     migrations: [__dirname + "/migration/**/*{.ts,.js}"],
+        //     synchronize: true,
+        //     name: "sumo",
+        //     cli: {
+        //         "migrationsDir": "migration"
+        //     }
+        // });
+        const connection = await createConnection();
         this.wrestlerController = new WrestlerController();
         this.techniqueController = new TechniqueController();
         this.matchesController = new MatchController();

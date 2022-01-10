@@ -13,7 +13,7 @@ export class DayController {
 
     constructor() {
         this.dayService = new DaysService();
-        this.matchRepository = getConnection("sumo").getRepository(MatchEntity);
+        this.matchRepository = getConnection("default").getRepository(MatchEntity);
         this.router = Router();
         this.routes();
     }

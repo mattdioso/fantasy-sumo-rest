@@ -6,7 +6,7 @@ export class TechniqueService {
     private technique_repository: TechniqueRepository;
 
     constructor() {
-        this.technique_repository = getConnection("sumo").getRepository(TechniqueEntity);
+        this.technique_repository = getConnection("default").getRepository(TechniqueEntity);
     }
 
     public index = async() => {
