@@ -62,9 +62,9 @@ export class TournamentEntity {
     @JoinColumn()
     days: DaysEntity[];
 
-    // @OneToMany(() => TeamEntity, (team: TeamEntity) => team.tournament, {
-    //     onDelete: "CASCADE",
-    //     cascade: true
-    // })
-    // teams: TeamEntity[];
+    @OneToMany(() => TeamEntity, (team: TeamEntity) => team.tournament, {
+        onDelete: "CASCADE",
+        cascade: true
+    })
+    teams: TeamEntity[];
 }

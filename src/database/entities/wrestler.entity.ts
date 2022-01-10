@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, ManyToMany, NoNeedToReleaseEntityManagerError, PrimaryGeneratedColumn } from 'typeorm';
+import { TeamEntity } from './team.entity';
 
 @Entity('wrestlers')
 export class WrestlerEntity {
