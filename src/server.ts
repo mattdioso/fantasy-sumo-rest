@@ -9,6 +9,9 @@ import { MatchController } from './controller/matches.controller';
 import { RankingsController } from './controller/rankings.controller';
 import { TournamentController } from './controller/tournament.controller';
 import { DayController } from './controller/day.controller';
+import { UserController } from './controller/user.controller';
+import { TeamController } from './controller/team.controller';
+
 
 class Server {
     private app: express.Application;
@@ -18,13 +21,14 @@ class Server {
     private rankingsController: RankingsController;
     private tournamentController: TournamentController;
     private dayController: DayController;
+    private userController: UserController;
+    private teamController: TeamController;
 
     constructor() {
         this.app = express();
         this.configuration();
         this.routes();
         dotenv.config();
-        console.log(__dirname + '/../src/database/entities/**/*{.ts,.js}');
     }
 
     public configuration() {
@@ -35,21 +39,6 @@ class Server {
     }
 
     public async routes() {
-        // const connection = await createConnection({
-        //     type: "postgres",
-        //     host: "localhost",
-        //     port: 5432,
-        //     username: "matt",
-        //     password: "!Univega1986",
-        //     database: "sumo",
-        //     entities: [__dirname + "/database/entities/**/*{.ts,.js}"],
-        //     migrations: [__dirname + "/migration/**/*{.ts,.js}"],
-        //     synchronize: true,
-        //     name: "sumo",
-        //     cli: {
-        //         "migrationsDir": "migration"
-        //     }
-        // });
         const connection = await createConnection();
         this.wrestlerController = new WrestlerController();
         this.techniqueController = new TechniqueController();
@@ -57,12 +46,16 @@ class Server {
         this.rankingsController = new RankingsController();
         this.tournamentController = new TournamentController();
         this.dayController = new DayController();
+        this.userController = new UserController();
+        this.teamController = new TeamController();
         this.app.use('/api/wrestlers', this.wrestlerController.router);
         this.app.use('/api/techniques', this.techniqueController.router);
         this.app.use('/api/matches', this.matchesController.router);
         this.app.use('/api/rankings', this.rankingsController.router);
         this.app.use('/api/tournaments', this.tournamentController.router);
         this.app.use('/api/days', this.dayController.router);
+        this.app.use('/api/users', this.userController.router);
+        this.app.use('/api/teams', this.teamController.router);
         this.app.get('/', (req: Request, res: Response) => {
             res.send("Hello world!");
         });
