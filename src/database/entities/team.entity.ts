@@ -1,4 +1,4 @@
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { TournamentController } from "../../controller/tournament.controller";
 import { WrestlerRepository } from "../../repository/wrestler.repository";
 import { TournamentEntity } from "./tournament.entity";
@@ -13,13 +13,17 @@ export class TeamEntity {
     @Column()
     teamname: string;
 
-    @OneToOne(() => UserEntity)
+    @OneToOne(() => UserEntity, user => user.team, {
+        eager: true
+    })
     user: UserEntity;
 
     @ManyToOne(() => TournamentEntity, (tournament: TournamentEntity) => tournament.teams)
     tournament: TournamentEntity;
     
-    @ManyToMany(() => WrestlerEntity)
+    @ManyToMany(() => WrestlerEntity, {
+        eager: true
+    })
     @JoinTable()
     wrestlers: WrestlerEntity[];
 }

@@ -19,7 +19,10 @@ export class UserEntity {
     @Column()
     email: string;
 
-    @OneToOne(() => TeamEntity)
+    @OneToOne(() => TeamEntity, team => team.user, {
+        onDelete: "SET NULL",
+        cascade: true
+    })
     @JoinColumn()
     team: TeamEntity;
 }

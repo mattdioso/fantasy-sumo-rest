@@ -56,10 +56,22 @@ export class TeamController {
         });
     }
 
+    public delete = async (req: Request, res: Response) => {
+        let id = req['params']['id'];
+        await this.teamService.delete(id).then(deleted_team => {
+            return res.send(deleted_team);
+        }).catch(err => {
+            return res.sendStatus(500).send({
+                message: err.message || "some error occured"
+            })
+        })
+    }
+
     public routes() {
         this.router.get('/', this.index);
         this.router.get('/:id', this.get_team);
         this.router.post('/', this.create);
         this.router.put('/:id', this.update);
+        this.router.delete('/:id', this.delete);
     }
 }
