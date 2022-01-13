@@ -33,6 +33,17 @@ export class TeamController {
         });
     }
 
+    public get_team_wrestlers = async (req: Request, res: Response) => {
+        let id = req['params']['id'];
+        await this.teamService.get_team_wrestlers(id).then(wrestlers => {
+            return res.send(wrestlers);
+        }).catch(err => {
+            return res.sendStatus(500).send({
+                message: err.message || "some error occured"
+            })
+        });
+    }
+
     public create = async (req: Request, res: Response) => {
         let team = req['body'] as TeamEntity;
         await this.teamService.create(team).then(new_team => {
@@ -70,6 +81,7 @@ export class TeamController {
     public routes() {
         this.router.get('/', this.index);
         this.router.get('/:id', this.get_team);
+        this.router.get('/:id/wrestlers', this.get_team_wrestlers);
         this.router.post('/', this.create);
         this.router.put('/:id', this.update);
         this.router.delete('/:id', this.delete);

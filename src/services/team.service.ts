@@ -33,6 +33,15 @@ export class TeamService {
         return team;
     }
 
+    public get_team_wrestlers = async(id: string) => {
+        let team = await this.team_repository.findOne(id);
+        let res =  await getConnection("default").createQueryBuilder()
+                .relation(TeamEntity, "wrestlers")
+                .of(team)
+                .loadMany();
+        return res;
+    }
+
     public create = async (team: TeamEntity) => {
         const new_team = await this.team_repository.create(team);
         let wrestlers = team.wrestlers;
@@ -57,7 +66,6 @@ export class TeamService {
     }
 
     public update = async(team: TeamEntity, id: string) => {
-
         if (team.user) {
             let user_id = team.user;
             console.log(user_id)
@@ -81,7 +89,9 @@ export class TeamService {
         // await this.team_repository.update(id, updated!).catch(err => {console.log(err)});
 
         if (team.wrestlers) {
-
+            let team_to_update = await this.team_repository.findOne(id);
+            team_to_update!.wrestlers = [];
+            await this.team_repository.save(team_to_update!);
             for (let i = 0; i< team.wrestlers.length; i++) {
                 await getConnection("default").createQueryBuilder()
                 .relation(TeamEntity, "wrestlers")
