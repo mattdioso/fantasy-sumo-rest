@@ -3,7 +3,6 @@ import { WrestlerEntity } from '../database/entities/wrestler.entity';
 import { SearchService } from '../services/search.service';
 import { WrestlerService } from '../services/wrestler.service';
 import { resolve } from 'path';
-import { writeHeapSnapshot } from 'v8';
 
 export class WrestlerController {
     public router: Router;
@@ -90,7 +89,8 @@ export class WrestlerController {
     public avatar = async (req: Request, res: Response) => {
         const id = req['params']['id'];
         await this.wrestlerService.get_wrestler(id).then(wrestler => {
-            let path = resolve(__dirname + `/../../python/sumo_pics/${wrestler!.ringname}.jpg`);
+
+            let path = resolve(__dirname + `/../../../python/sumo_pics/${wrestler!.ringname}.jpg`);
             return res.sendFile(path);
         
         }).catch(err => {
@@ -103,7 +103,7 @@ export class WrestlerController {
     public icon = async (req: Request, res: Response) => {
         const id = req['params']['id'];
         await this.wrestlerService.get_wrestler(id).then(wrestler => {
-            let path = resolve(__dirname + `/../../python/sumo_icons/${wrestler!.ringname}_icon.jpg`);
+            let path = resolve(__dirname + `/../../../python/sumo_icons/${wrestler!.ringname}_icon.jpg`);
             return res.sendFile(path);
         }).catch(err => {
             return res.sendStatus(500).send({

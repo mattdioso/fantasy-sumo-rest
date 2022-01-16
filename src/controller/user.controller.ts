@@ -1,4 +1,5 @@
 import { Router, Response, Request } from 'express';
+import { resolve } from 'path';
 import { UserEntity } from '../database/entities/user.entity';
 import { UserService } from '../services/user.service';
 
@@ -56,9 +57,22 @@ export class UserController {
         });
     }
 
+    public avatar = async (req: Request, res: Response) => {
+        const id = req['params']['id'];
+        await this.userService.get_user(id).then(user => {
+            let path = resolve(__dirname + `/../../../python/user_pics/${user!.lastname}.jpg`);
+            return res.sendFile(path);
+        }).catch(err => {
+            return res.sendStatus(500).send({
+                message: err.message || "some error occured"
+            })
+        });
+    }
+
     public routes() {
         this.router.get('/', this.index);
         this.router.get('/:id', this.get_user);
+        this.router.get('/:id/avatar', this.avatar);
         this.router.post('/', this.create);
         this.router.put('/:id', this.update);
     }

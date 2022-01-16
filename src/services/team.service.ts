@@ -1,4 +1,3 @@
-import { emitWarning } from "process";
 import { getConnection } from "typeorm";
 import { TeamEntity } from "../database/entities/team.entity";
 import { TournamentEntity } from "../database/entities/tournament.entity";
