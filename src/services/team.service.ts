@@ -59,6 +59,7 @@ export class TeamService {
             }
             team.wrestlers = wrestlers;
         }
+        new_team.user = user!;
         new_team.wrestlers = team.wrestlers;
         await this.team_repository.save(new_team);
         return new_team;
