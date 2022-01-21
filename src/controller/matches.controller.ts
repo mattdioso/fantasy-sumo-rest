@@ -19,8 +19,7 @@ export class MatchController {
             return res.sendStatus(500).send({
                 message: err.message || "some error occured on the server"
             })
-        });
-        
+        });   
     }
 
     public get_match = async(req: Request, res: Response) => {
