@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'ty
 import { TournamentEntity } from './tournament.entity';
 import { DaysEntity } from './day.entity';
 import { MatchEntity } from './matches.entity';
+import { WrestlerEntity } from './wrestler.entity';
 
 @Entity('match_scores')
 export class MatchScores {
@@ -21,6 +22,12 @@ export class MatchScores {
     @JoinColumn()
     match: MatchEntity;
 
-    @Column()
+    @OneToOne(() => WrestlerEntity)
+    @JoinColumn()
+    wrestler: WrestlerEntity;
+
+    @Column({
+        type: 'decimal'
+    })
     score: number;
 }

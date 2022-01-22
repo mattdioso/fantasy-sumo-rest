@@ -1,4 +1,4 @@
-import { getConnection } from 'typeorm';
+import { createQueryBuilder, getConnection } from 'typeorm';
 import { TournamentEntity } from '../database/entities/tournament.entity';
 import { DaysEntity } from '../database/entities/day.entity';
 import { MatchEntity } from '../database/entities/matches.entity';
@@ -57,29 +57,71 @@ export class MatchScoreService {
     }
 
     public get_match_score = async(match_id: string) => {
-        let res = await getConnection("default").createQueryBuilder()
-            .relation(MatchEntity, "match")
-            .of(match_id)
-            .loadOne();
+        console.log(match_id);
+        let match = await this.match_repository.findOne(match_id);
+        let res = await this.match_score_repository.createQueryBuilder('match_scores')
+                        .leftJoinAndSelect('match_scores.match', 'match')
+                        .where("match_scores.match.id = :matchId ", {matchId: match_id} )
+                        .getOne();
+        console.log(res);
         return res;
     }
 
     public create_match_score = async(match_id: string) => {
         let match = await this.match_repository.findOne(match_id) as MatchEntity;
-        let day = match.day as DaysEntity;
-        let tournament = day.tournament as TournamentEntity;
+        let day = await this.day_repository.createQueryBuilder()
+                        .relation(MatchEntity, "day")
+                        .of(match)
+                        .loadOne();
+        let tournament = await this.tournament_repository.createQueryBuilder()
+                            .relation(DaysEntity, "tournament")
+                            .of(day)
+                            .loadOne();
         let winning_wrestler = "";
-        if (match.win1 === 1) {
+        let winning_technique = match.winTechniqueId;
+        if (match.win1 === 0) {
             winning_wrestler = match.idWrestler1;
         } else {
             winning_wrestler = match.idWrestler2;
         }
-        this.calculate_score(match.idWrestler1, match.idWrestler2, match.win1, match.win2);
+        let score = await this.calculate_score(match.idWrestler1, match.idWrestler2, match.win1, match.win2, winning_technique);
+        let match_score = await this.match_score_repository.create();
+        match_score.day = day;
+        match_score.match = match;
+        match_score.tournament = tournament;
+        let winner = await this.wrestler_repository.findOne(winning_wrestler) as WrestlerEntity;
+        match_score.wrestler = winner;
+        match_score.score = score;
+        await this.match_score_repository.save(match_score);
+        return match_score;
     }
 
-    private calculate_score = async(wrestler1: string, wrestler2: string, win1: number, win2: number) => {
+    private calculate_score = async(wrestler1: string, wrestler2: string, win1: number, win2: number, winTechniqueId: string) => {
         let rank1 = await this.ranking_repository.findOne({ idWrestler: wrestler1 }) as RankingsEntity;
         let rank2 = await this.ranking_repository.findOne({ idWrestler: wrestler2 }) as RankingsEntity;
-        console.log("RANK 1: " + rank1 + " RANK 2: " + rank2);
+        console.log("RANK 1: " + rank1.rank + " RANK 2: " + rank2.rank);
+        let i1 = Rank.indexOf(rank1.rank);
+        let i2 = Rank.indexOf(rank2.rank);
+        console.log("RANK 1: " + i1 + " RANK 2: " + i2);
+        let score = 0;
+        let tech = await this.technique_repository.findOne(winTechniqueId);
+        if(win1 === 0) {
+            let diff = i1 - i2;
+            if (diff > 0) {
+                score = 1 + (diff / 10);
+            } else {
+                score = 1;
+            }
+            console.log("wrestler 1 gets a score of: " + score);
+        } else {
+            let diff = i2 - i1;
+            if (diff > 0) {
+                score = 1 + (diff / 10);
+            } else {
+                score = 1;
+            }
+            console.log("wrestler 2 gets a score of: " + score);
+        }
+        return score;
     }
 }
