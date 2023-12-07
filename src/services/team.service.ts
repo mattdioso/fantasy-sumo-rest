@@ -8,18 +8,28 @@ import { TournamentRepository } from "../repository/tournament.repository";
 import { UserRepository } from "../repository/user.repository";
 import { WrestlerRepository } from "../repository/wrestler.repository";
 import { WrestlerService } from "./wrestler.service";
+import { FantasyTournamentRepository } from "../repository/fantasy_tournament.repository";
+import { FantasyTournamentEntity } from "../database/entities/fantasy_tournament.entity";
+import dataSource from "../database/ormconfig";
 
 export class TeamService {
     private team_repository: TeamRepository;
     private wrestler_repository: WrestlerRepository;
     private user_repository: UserRepository;
     private tournament_repository: TournamentRepository;
+    private fantasy_tournament_repository: FantasyTournamentRepository;
 
     constructor() {
-        this.team_repository = getConnection("default").getRepository(TeamEntity);
-        this.wrestler_repository = getConnection("default").getRepository(WrestlerEntity);
-        this.user_repository = getConnection("default").getRepository(UserEntity);
-        this.tournament_repository = getConnection("default").getRepository(TournamentEntity);
+        // this.team_repository = getConnection("default").getRepository(TeamEntity);
+        // this.wrestler_repository = getConnection("default").getRepository(WrestlerEntity);
+        // this.user_repository = getConnection("default").getRepository(UserEntity);
+        // this.tournament_repository = getConnection("default").getRepository(TournamentEntity);
+        // this.fantasy_tournament_repository = getConnection("default").getRepository(FantasyTournamentEntity);
+        this.team_repository = dataSource.getRepository(TeamEntity);
+        this.wrestler_repository = dataSource.getRepository(WrestlerEntity);
+        this.user_repository = dataSource.getRepository(UserEntity);
+        this.tournament_repository = dataSource.getRepository(TournamentEntity);
+        this.fantasy_tournament_repository = dataSource.getRepository(FantasyTournamentEntity);
     }
 
     public index = async() => {
@@ -28,12 +38,20 @@ export class TeamService {
     }
 
     public get_team = async(id: string) => {
-        let team = await this.team_repository.findOne(id);
+        let team = await this.team_repository.findOne({
+            where: {
+                id: id
+            }
+        });
         return team;
     }
 
     public get_team_wrestlers = async(id: string) => {
-        let team = await this.team_repository.findOne(id);
+        let team = await this.team_repository.findOne({
+            where: {
+                id: id
+            }
+        });
         let res =  await getConnection("default").createQueryBuilder()
                 .relation(TeamEntity, "wrestlers")
                 .of(team)
@@ -44,21 +62,47 @@ export class TeamService {
     public create = async (team: TeamEntity) => {
         const new_team = await this.team_repository.create(team);
         let wrestlers = team.wrestlers;
-        let user = await this.user_repository.findOne(team.user);
+        let user = await this.user_repository.findOne({
+            where: {
+                id: team.user.id
+            }
+        });
         team.user = user!;
-        if (team.tournament) {
-            let tournament = await this.tournament_repository.findOne(team.tournament);
-            team.tournament = tournament!;
+        if (team.fantasy_tournament) {
+            let tournament = await this.fantasy_tournament_repository.findOne({
+                where: {
+                    id: team.fantasy_tournament.id
+                }
+            });
+            team.fantasy_tournament = tournament!;
         }
+        // if (team.wrestlers) {
+        //    for (let i = 0; i < wrestlers.length; i++) {
+        //         let wrestler_id = wrestlers[i] as WrestlerEntity;
+        //         let wrestler = await this.wrestler_repository.findOne({
+        //             where: {
+        //                 id: wrestler_id.id
+        //             }
+        //         });
+                
+        //         team.wrestlers[i] = wrestler!;
+        //     }
+        //     team.wrestlers = wrestlers;
+        // }
         if (team.wrestlers) {
-           for (let i = 0; i < wrestlers.length; i++) {
-               let wrestler_id = wrestlers[i];
-                let wrestler = await this.wrestler_repository.findOne(wrestler_id);
-                console.log(wrestler);
+            for (let i = 0; i < team.wrestlers.length; i++) {
+                let wrestler_id = team.wrestlers[i].id;
+//                console.log(typeof wrestler_id);
+                let wrestler = await this.wrestler_repository.findOne({
+                    where: {
+                        id: wrestler_id
+                    }
+                })
                 team.wrestlers[i] = wrestler!;
             }
-            team.wrestlers = wrestlers;
+
         }
+        console.log(team.wrestlers);
         new_team.user = user!;
         new_team.wrestlers = team.wrestlers;
         await this.team_repository.save(new_team);
@@ -77,19 +121,23 @@ export class TeamService {
             .set(user_id).catch(err => {console.log(err)});
         }
         console.log("added user");
-        if (team.tournament) {
+        if (team.fantasy_tournament) {
             // let tournament = await this.tournament_repository.findOne(team.tournament);
             // updated!.tournament = tournament!;
             await getConnection("default").createQueryBuilder()
             .relation(TeamEntity, "tournament")
             .of(id)
-            .set(team.tournament).catch(err => {console.log(err)});
+            .set(team.fantasy_tournament).catch(err => {console.log(err)});
         }
         console.log("added tournament");
         // await this.team_repository.update(id, updated!).catch(err => {console.log(err)});
 
         if (team.wrestlers) {
-            let team_to_update = await this.team_repository.findOne(id);
+            let team_to_update = await this.team_repository.findOne({
+                where: {
+                    id: id
+                }
+            });
             team_to_update!.wrestlers = [];
             await this.team_repository.save(team_to_update!);
             for (let i = 0; i< team.wrestlers.length; i++) {
@@ -101,7 +149,11 @@ export class TeamService {
         }
         console.log("added wrestlers");
         
-        return await this.team_repository.findOne(id);
+        return await this.team_repository.findOne({
+            where: {
+                id: id
+            }
+        });
     }
 
     public delete = async (id: string) => {

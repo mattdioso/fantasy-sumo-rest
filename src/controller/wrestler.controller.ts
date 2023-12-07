@@ -20,6 +20,7 @@ export class WrestlerController {
         await this.wrestlerService.index().then(wrestlers => {
             return res.send(wrestlers);
         }).catch(err => {
+            console.log(err);
             return res.sendStatus(500).send({
                 message: err.message || "some error occured"
             })
@@ -39,9 +40,11 @@ export class WrestlerController {
 
     public create = async (req: Request, res: Response) => {
         const wrestler = req['body'] as WrestlerEntity;
+        console.log(wrestler);
         await this.wrestlerService.create(wrestler).then(new_wrestler => {
             return res.send(new_wrestler);
         }).catch(err => {
+            console.log(err);
             return res.sendStatus(500).send({
                 message: err.message || "some error occured"
             })
@@ -112,6 +115,19 @@ export class WrestlerController {
         });
     }
 
+    public search_wrestler_score = async(req: Request, res: Response) => {
+        const wrestler_id = req['body']['wrestler_id'];
+        const tournament_id = req['body']['tournament_id'];
+        const day_num = req['body']['day'] as number;
+        await this.searchService.search_score(wrestler_id, tournament_id, day_num).then(result => {
+            return res.send(result);
+        }).catch(err => {
+            return res.sendStatus(500).send({
+                message: err.message || "some error occured"
+            })
+        });
+    }
+
     public routes() {
         this.router.get('/', this.index);
         this.router.get('/:id', this.get_wrestler);
@@ -121,5 +137,6 @@ export class WrestlerController {
         this.router.put('/:id', this.update);
         this.router.delete('/:id', this.delete);
         this.router.post('/search', this.search);
+        this.router.post('/search_score', this.search_wrestler_score);
     }
 }

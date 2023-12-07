@@ -2,6 +2,7 @@ import { Column, Entity, OneToOne, PrimaryGeneratedColumn, JoinColumn, ManyToOne
 import { DaysEntity } from './day.entity';
 import { TechniqueEntity } from './techniques.entity';
 import { WrestlerEntity } from './wrestler.entity';
+import { TournamentEntity } from './tournament.entity';
 
 @Entity('matches')
 export class MatchEntity {
@@ -35,6 +36,14 @@ export class MatchEntity {
     @Column()
     matchNum: number;
 
-    @ManyToOne(()=> DaysEntity, (day: DaysEntity) => day.matches)
-    day: DaysEntity
+    // @ManyToOne(()=> DaysEntity, (day: DaysEntity) => day.matches)
+    // day: DaysEntity;
+    @Column({
+        type: "integer",
+        nullable: true
+    })
+    day: number;
+
+    @ManyToOne(() => TournamentEntity, (tournament: TournamentEntity) => tournament.matches)
+    tournament: TournamentEntity;
 }

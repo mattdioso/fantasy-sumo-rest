@@ -137,3 +137,5 @@ package-lock.json
 migration/**
 
 **/ormconfig.json
+.DS_Store
+**/ormconfig.*

@@ -1,12 +1,19 @@
 import { getConnection, getCustomRepository } from "typeorm";
 import { MatchEntity } from "../database/entities/matches.entity";
+import { MatchScores } from "../database/entities/match_scores";
 import { MatchRepository } from "../repository/matches.repository";
+import { MatchScoreRepository } from "../repository/match_score.repository";
+import { MatchScoreService } from "./match_score.service";
+import dataSource from "../database/ormconfig";
 
 export class MatchService {
     private match_repository: MatchRepository;
+    private match_score_service: MatchScoreService;
 
     constructor() {
-        this.match_repository = getConnection("default").getRepository(MatchEntity);
+        //this.match_repository = getConnection("default").getRepository(MatchEntity);
+        this.match_repository = dataSource.getRepository(MatchEntity);
+        this.match_score_service = new MatchScoreService();
     }
 
     public index = async() => {
@@ -15,13 +22,18 @@ export class MatchService {
     }
 
     public get_match = async(id: string) => {
-        let match = await this.match_repository.findOne(id);
+        let match = await this.match_repository.findOne({
+            where: {
+                id: id
+            }
+        });
         return match;
     }
 
     public create = async (match: MatchEntity) => {
         const new_match = await this.match_repository.create(match);
         await this.match_repository.save(new_match);
+        await this.match_score_service.create_match_score(new_match.id);
         return new_match;
     }
 

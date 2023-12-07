@@ -32,7 +32,7 @@ def find_technique_id(technique):
   res = requests.post(search_url, headers=sumo_headers, json=json_body)
   return res.json()['id']
 
-def create_match(east_id, east_win, west_id, west_win, technique_id, forfeit_one, forfeit_two, match_num):
+def create_match(east_id, east_win, west_id, west_win, technique_id, forfeit_one, forfeit_two, match_num, day):
   match_url = "http://localhost:5000/api/matches"
   match_body = {
     "idWrestler1": east_id,
@@ -42,7 +42,9 @@ def create_match(east_id, east_win, west_id, west_win, technique_id, forfeit_one
     "win2": west_win,
     "winByForfeit2": forfeit_two,
     "winTechniqueId": technique_id,
-    "matchNum": match_num
+    "matchNum": match_num,
+    "day": day,
+    "tournament": "1faf296f-1e65-4572-8ad5-7d977c200cc5"
   }
   res = requests.post(match_url, json=match_body)
   print(res.json())
@@ -58,7 +60,7 @@ def create_day(day_num, matches):
   return res.json()['id']
 
 
-def process_tr(tr, match_num):
+def process_tr(tr, match_num, day_num):
   west_won = False
   east_won = False
   td = tr.find_all("td")
@@ -81,13 +83,13 @@ def process_tr(tr, match_num):
     if technique == "fusen":
       forfeit_one = 0
     print("%s beat %s using %s"% (east_wrestler, west_wrestler, technique.text))
-    match_id = create_match(east_wrestler_id, 0, west_wrestler_id, 1, technique_id, forfeit_one, forfeit_two, match_num)
+    match_id = create_match(east_wrestler_id, 0, west_wrestler_id, 1, technique_id, forfeit_one, forfeit_two, match_num, day_num)
     return match_id
   else:
     if technique == "fusen":
       forfeit_two = 1
     print("%s beat %s using %s"% (west_wrestler, east_wrestler, technique.text))
-    match_id = create_match(east_wrestler_id, 1, west_wrestler_id, 0, technique_id, forfeit_one, forfeit_two, match_num)
+    match_id = create_match(east_wrestler_id, 1, west_wrestler_id, 0, technique_id, forfeit_one, forfeit_two, match_num, day_num)
     return match_id
 
 
@@ -99,19 +101,19 @@ tournament_id = tournament_json[0]['id']
 print(tournament_id)
 
 day = 1
-tournament_url = "http://sumodb.sumogames.de/Results.aspx?b=202111&d=<DAY>"
+tournament_url = "http://sumodb.sumogames.de/Results.aspx?b=202311&d=<DAY>"
 days = []
 s = requests.Session()
-
+matches =[]
 for i in range(1, 16):
-  matches=[]
+#  matches=[]
   print(i)
   tournament_payload = {
     "basho_id": 608,
     "day": i
   }
 
-  referer = "http://sumodb.sumogames.de/Results.aspx?b=202111&d=<DAY>"
+  referer = "http://sumodb.sumogames.de/Results.aspx?b=202311&d=<DAY>"
   ajax_headers = {
     "Accept": "application/json, text/javascript, */*; q=0.01",
     "Accept-Encoding": "gzip, deflate, br",
@@ -126,14 +128,14 @@ for i in range(1, 16):
   soup = BeautifulSoup(page.content, 'html.parser')
   tables=soup.find_all(class_="tk_table")[0].find_all("tr")
   for x in range(1, len(tables)):
-    match_id = process_tr(tables[x], len(matches) + 1)
+    match_id = process_tr(tables[x], len(matches) + 1, i)
     matches.append({ "id": match_id})
-  print(matches)
-  day_id = create_day(i, matches)
-  days.append({ "id": day_id })
+#  print(matches)
+#  day_id = create_day(i, matches)
+#  days.append({ "id": day_id })
 
 tournament_update = {
-  "days": days
+  "matches": matches
 }
 res = requests.put(api_url + "/tournaments/" + tournament_id, json=tournament_update)
 print(res.json())

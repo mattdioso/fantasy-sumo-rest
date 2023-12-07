@@ -5,7 +5,7 @@ import { TeamEntity } from './team.entity';
 export class WrestlerEntity {
 
     @PrimaryGeneratedColumn("uuid")
-    id: number;
+    id: string;
 
     @Column({
         type: "varchar",
@@ -68,11 +68,11 @@ export class WrestlerEntity {
     })
     retired: boolean;
 
-    public getId(): number {
+    public getId(): string {
         return this.id;
     }
 
-    public setId(id: number): void {
+    public setId(id: string): void {
         this.id = id;
     }
 

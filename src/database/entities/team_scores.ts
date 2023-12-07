@@ -14,6 +14,8 @@ export class TeamScores {
     @OneToOne(() => TeamEntity)
     team: TeamEntity;
 
-    @Column()
+    @Column({
+        type: 'decimal'
+    })
     score: number;
 }

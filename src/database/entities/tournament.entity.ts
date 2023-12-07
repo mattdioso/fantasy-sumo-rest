@@ -1,6 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { DaysEntity } from "./day.entity";
 import { TeamEntity } from "./team.entity";
+import { MatchEntity } from "./matches.entity";
 
 @Entity('tournaments')
 export class TournamentEntity {
@@ -54,17 +55,19 @@ export class TournamentEntity {
     })
     banzuke_id: string;
 
-    @OneToMany(() => DaysEntity, (day: DaysEntity) => day.tournament, {
+    // @OneToMany(() => DaysEntity, (day: DaysEntity) => day.tournament, {
+    //     onDelete: "CASCADE",
+    //     cascade: true,
+    //     eager: true
+    // })
+    // @JoinColumn()
+    // days: DaysEntity[];
+
+    @OneToMany(() => MatchEntity, (match: MatchEntity) => match.tournament, {
         onDelete: "CASCADE",
         cascade: true,
         eager: true
     })
-    @JoinColumn()
-    days: DaysEntity[];
+    matches: MatchEntity[];
 
-    @OneToMany(() => TeamEntity, (team: TeamEntity) => team.tournament, {
-        onDelete: "CASCADE",
-        cascade: true
-    })
-    teams: TeamEntity[];
 }

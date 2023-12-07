@@ -2,12 +2,14 @@ import { getConnection } from "typeorm";
 import { RankingsEntity } from "../database/entities/rankings.entity";
 import { RankingsRepository } from "../repository/rankings.repository";
 import Rank from '../ranks/rank.enum';
+import dataSource from "../database/ormconfig";
 
 export class RankingsService {
     private rankings_repository: RankingsRepository;
 
     constructor() {
-        this.rankings_repository = getConnection("default").getRepository(RankingsEntity);
+        //this.rankings_repository = getConnection("default").getRepository(RankingsEntity);
+        this.rankings_repository = dataSource.getRepository(RankingsEntity);
     }
 
     public index = async() => {
@@ -16,7 +18,11 @@ export class RankingsService {
     }
 
     public get_tournament_rankings = async(tournament_id: string) => {
-        const rankings = await this.rankings_repository.find({ idTournament: tournament_id });
+        const rankings = await this.rankings_repository.find({ 
+            where: {
+                idTournament: tournament_id 
+            }
+        });
         rankings.sort((a, b) => Rank.indexOf(a.rank) - Rank.indexOf(b.rank));
         return rankings;
     }

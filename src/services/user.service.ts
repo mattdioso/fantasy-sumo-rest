@@ -1,12 +1,14 @@
 import { getConnection, getCustomRepository } from "typeorm";
 import { UserEntity } from "../database/entities/user.entity";
 import { UserRepository } from "../repository/user.repository";
+import dataSource from "../database/ormconfig";
 
 export class UserService {
     private user_repository: UserRepository;
 
     constructor() {
-        this.user_repository = getConnection("default").getRepository(UserEntity);
+        //this.user_repository = getConnection("default").getRepository(UserEntity);
+        this.user_repository = dataSource.getRepository(UserEntity);
     }
 
     public index = async() => {
@@ -15,7 +17,11 @@ export class UserService {
     }
 
     public get_user = async(id: string) => {
-        let user = await this.user_repository.findOne(id);
+        let user = await this.user_repository.findOne({
+            where: {
+                id: id
+            }
+        });
         return user;
     }
 

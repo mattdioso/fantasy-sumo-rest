@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { TournamentEntity } from './tournament.entity';
 import { DaysEntity } from './day.entity';
 import { MatchEntity } from './matches.entity';
@@ -10,19 +10,20 @@ export class MatchScores {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
-    @OneToOne(() => TournamentEntity)
+    @ManyToOne(() => TournamentEntity)
     @JoinColumn()
     tournament: TournamentEntity;
 
-    @OneToOne(() => DaysEntity)
-    @JoinColumn()
-    day: DaysEntity;
+    @Column({
+        type: 'integer'
+    })
+    day: number;
 
     @OneToOne(() => MatchEntity)
     @JoinColumn()
     match: MatchEntity;
 
-    @OneToOne(() => WrestlerEntity)
+    @ManyToOne(() => WrestlerEntity)
     @JoinColumn()
     wrestler: WrestlerEntity;
 

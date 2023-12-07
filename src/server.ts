@@ -11,6 +11,8 @@ import { TournamentController } from './controller/tournament.controller';
 import { DayController } from './controller/day.controller';
 import { UserController } from './controller/user.controller';
 import { TeamController } from './controller/team.controller';
+import { FantasyTournamentController } from './controller/fantasy_tournament.controller';
+import { FantasyMatchupController } from './controller/fantasy_matchup.controller';
 
 
 class Server {
@@ -23,6 +25,8 @@ class Server {
     private dayController: DayController;
     private userController: UserController;
     private teamController: TeamController;
+    private fantasyTournamentController: FantasyTournamentController;
+    private fantasyMatchupController: FantasyMatchupController;
 
     constructor() {
         this.app = express();
@@ -48,6 +52,8 @@ class Server {
         this.dayController = new DayController();
         this.userController = new UserController();
         this.teamController = new TeamController();
+        this.fantasyTournamentController = new FantasyTournamentController();
+        this.fantasyMatchupController = new FantasyMatchupController();
         this.app.use('/api/wrestlers', this.wrestlerController.router);
         this.app.use('/api/techniques', this.techniqueController.router);
         this.app.use('/api/matches', this.matchesController.router);
@@ -56,6 +62,8 @@ class Server {
         this.app.use('/api/days', this.dayController.router);
         this.app.use('/api/users', this.userController.router);
         this.app.use('/api/teams', this.teamController.router);
+        this.app.use('/api/fantasy_tournaments', this.fantasyTournamentController.router);
+        this.app.use('/api/fantasy_matchips', this.fantasyMatchupController.router);
         this.app.get('/', (req: Request, res: Response) => {
             res.send("Hello world!");
         });

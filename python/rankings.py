@@ -19,7 +19,7 @@ def create_ranking(rank, wins, losses, division, wrestler):
   wrestler_id = find_wrestler_id(wrestler)
   rank_payload = {
     "rank": rank,
-    "idTournament": "857bc3fa-c100-4952-b5bf-3114471cba55",
+    "idTournament": "1faf296f-1e65-4572-8ad5-7d977c200cc5",
     "wins": wins,
     "losses": losses,
     "division": division,
@@ -27,7 +27,7 @@ def create_ranking(rank, wins, losses, division, wrestler):
   }
   rank_url = "http://localhost:5000/api/rankings"
   res = requests.post(rank_url, json=rank_payload)
-  print(res.json())
+#  print(res.json())
 
 def find_wrestler_id(wrestler):
   search_url="http://localhost:5000/api/wrestlers/search"
@@ -37,7 +37,7 @@ def find_wrestler_id(wrestler):
   res = requests.post(search_url, json=json_body)
   return res.json()['id']
 
-banzuke_url = "http://sumodb.sumogames.de/Banzuke.aspx?b=202111&heya=-1&shusshin=-1"
+banzuke_url = "http://sumodb.sumogames.de/Banzuke.aspx?b=202311&heya=-1&shusshin=-1#J"
 page = requests.get(banzuke_url)
 soup = BeautifulSoup(page.content, 'html.parser')
 tables = soup.find_all(class_="banzuke")
@@ -46,11 +46,17 @@ rows = body.find_all("tr")
 for row in rows:
   tds = row.find_all("td")
   rank = tds[2].text
-  print(rank)
+#  print(rank)
   if tds[0].text and tds[1].text:
-    west_record = tds[0].a.text.split(" ")[0]
-    west_name = tds[1].a.text
-    west_json_record = process_record(west_record)
+#    print(tds[2].a)
+    try:
+        west_record = tds[0].a.text.split(" ")[0]
+        west_name = tds[1].a.text
+        west_json_record = process_record(west_record)
+    except:
+        west_record = tds[3].a.text.split(" ")[0]
+        west_name = tds[2].a.text
+        west_json_record = process_record(west_record)
     print(west_name + "\t wins: " + west_json_record['wins'] + "\t losses: " + west_json_record['losses'])
     create_ranking(rank, west_json_record['wins'], west_json_record['losses'], "west", west_name)
   if len(tds) > 4:

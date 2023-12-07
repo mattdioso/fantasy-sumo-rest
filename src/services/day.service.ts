@@ -19,7 +19,11 @@ export class DaysService {
     }
 
     public get_day = async(id: string) => {
-        let day = await this.days_repository.findOne(id);
+        let day = await this.days_repository.findOne({
+            where: {
+                id: id
+            }
+        });
         return day;
     }
 
@@ -28,7 +32,7 @@ export class DaysService {
         let matches = day.matches;
         for (let i = 0; i < matches.length; i++) {
             console.log(matches[i].id);
-            let match = await this.match_repository.findOne({ id: matches[i].id });
+            let match = await this.match_repository.findOne({where: { id: matches[i].id }});
             matches[i] = match!;
         }
         day.matches = matches;
@@ -38,12 +42,12 @@ export class DaysService {
 
     public update = async (day: DaysEntity, id: string) => {
         for (let i = 0; i < day.matches.length; i++) {
-            let match = await this.match_repository.findOne({ id: day.matches[i].id });
+            let match = await this.match_repository.findOne({where: { id: day.matches[i].id }});
             await getConnection("default").createQueryBuilder()
             .relation(DaysEntity, "matches")
             .of(id)
             .add(day.matches[i].id);
         }
-        return await this.days_repository.findOne({ id: id });
+        return await this.days_repository.findOne({where: { id: id }});
     }
 }

@@ -1,12 +1,14 @@
 import { getConnection, getCustomRepository } from "typeorm";
 import { TechniqueEntity } from "../database/entities/techniques.entity";
 import { TechniqueRepository } from "../repository/techniques.repository";
+import dataSource from "../database/ormconfig";
 
 export class TechniqueService {
     private technique_repository: TechniqueRepository;
 
     constructor() {
-        this.technique_repository = getConnection("default").getRepository(TechniqueEntity);
+        //this.technique_repository = getConnection("default").getRepository(TechniqueEntity);
+        this.technique_repository = dataSource.getRepository(TechniqueEntity);
     }
 
     public index = async() => {
@@ -15,7 +17,11 @@ export class TechniqueService {
     }
 
     public get_technique = async(id: string) => {
-        return await this.technique_repository.findOne(id)
+        return await this.technique_repository.findOne({
+            where: {
+                id: id
+            }
+        })
     }
 
     public create = async (technique: TechniqueEntity) => {

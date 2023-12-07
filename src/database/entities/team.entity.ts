@@ -4,6 +4,7 @@ import { WrestlerRepository } from "../../repository/wrestler.repository";
 import { TournamentEntity } from "./tournament.entity";
 import { UserEntity } from "./user.entity";
 import { WrestlerEntity } from "./wrestler.entity";
+import { FantasyTournamentEntity } from "./fantasy_tournament.entity";
 
 @Entity('teams')
 export class TeamEntity {
@@ -18,8 +19,8 @@ export class TeamEntity {
     })
     user: UserEntity;
 
-    @ManyToOne(() => TournamentEntity, (tournament: TournamentEntity) => tournament.teams)
-    tournament: TournamentEntity;
+    @ManyToOne(() => FantasyTournamentEntity, (fantasy_tournament: FantasyTournamentEntity) => fantasy_tournament.teams)
+    fantasy_tournament: FantasyTournamentEntity;
     
     @ManyToMany(() => WrestlerEntity, {
         eager: true
