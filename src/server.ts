@@ -63,7 +63,7 @@ class Server {
         this.app.use('/api/users', this.userController.router);
         this.app.use('/api/teams', this.teamController.router);
         this.app.use('/api/fantasy_tournaments', this.fantasyTournamentController.router);
-        this.app.use('/api/fantasy_matchips', this.fantasyMatchupController.router);
+        this.app.use('/api/fantasy_matchups', this.fantasyMatchupController.router);
         this.app.get('/', (req: Request, res: Response) => {
             res.send("Hello world!");
         });

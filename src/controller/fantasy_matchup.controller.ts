@@ -68,6 +68,10 @@ export class FantasyMatchupController {
     }
 
     public routes() {
-
+        this.router.get('/', this.index);
+        this.router.get('/:id', this.get_matchup);
+        this.router.post('/', this.create);
+        this.router.put('/:id', this.update);
+        this.router.delete('/', this.delete);
     }
 }

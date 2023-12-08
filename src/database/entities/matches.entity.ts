@@ -3,6 +3,8 @@ import { DaysEntity } from './day.entity';
 import { TechniqueEntity } from './techniques.entity';
 import { WrestlerEntity } from './wrestler.entity';
 import { TournamentEntity } from './tournament.entity';
+import { FantasyMatchupController } from '../../controller/fantasy_matchup.controller';
+import { FantasyMatchupEntity } from './fantasy_matchup.entity';
 
 @Entity('matches')
 export class MatchEntity {
@@ -46,4 +48,7 @@ export class MatchEntity {
 
     @ManyToOne(() => TournamentEntity, (tournament: TournamentEntity) => tournament.matches)
     tournament: TournamentEntity;
+
+    @ManyToOne(() => FantasyMatchupEntity, (matchup: FantasyMatchupEntity) => matchup.matches)
+    fantasy_matchup: FantasyMatchupEntity;
 }

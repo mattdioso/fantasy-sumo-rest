@@ -1,6 +1,8 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { FantasyTournamentEntity } from "./fantasy_tournament.entity";
 import { TeamEntity } from "./team.entity";
+import { MatchScores } from "./match_scores";
+import { MatchEntity } from "./matches.entity";
 
 @Entity("fantasy_matchup")
 export class FantasyMatchupEntity {
@@ -32,4 +34,12 @@ export class FantasyMatchupEntity {
 
     @Column()
     team2_score: number;
+
+    @OneToMany(() => MatchEntity, (match: MatchEntity) => match.fantasy_matchup, {
+        onDelete: "SET NULL",
+        cascade: true,
+        eager: true
+    })
+    @JoinColumn()
+    matches: MatchEntity[];
 }

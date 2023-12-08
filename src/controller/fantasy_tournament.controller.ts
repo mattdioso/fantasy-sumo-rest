@@ -16,6 +16,7 @@ export class FantasyTournamentController {
         await this.fantasyTournamentService.index().then(tournaments => {
             return res.send(tournaments);
         }).catch(err => {
+            console.log(err);
             return res.sendStatus(500).send({
                 message: err.message || "some error occured"
             })

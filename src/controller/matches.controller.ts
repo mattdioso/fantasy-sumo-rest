@@ -17,7 +17,7 @@ export class MatchController {
 
     public index = async(req: Request, res: Response) => {
         await this.matchService.index().then(result => {
-            return res.send(result);
+            return res.send(JSON.stringify(result));
         }).catch(err => {
             return res.sendStatus(500).send({
                 message: err.message || "some error occured on the server"
