@@ -38,6 +38,7 @@ export class FantasyMatchupController {
         await this.fantasyMatchupService.create(tourney).then(new_matchup => {
             return res.send(new_matchup);
         }).catch(err => {
+            console.log(err);
             return res.sendStatus(500).send({
                 message: err.message || "some error occured"
             })
@@ -50,6 +51,7 @@ export class FantasyMatchupController {
         await this.fantasyMatchupService.update(tournament, id).then(updated_matchup => {
             return res.send(updated_matchup);
         }).catch(err => {
+            console.log(err);
             return res.sendStatus(500).send({
                 message: err.message || "some error occured"
             })

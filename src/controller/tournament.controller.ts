@@ -28,6 +28,7 @@ export class TournamentController {
         await this.tournamentService.get_tournament(id).then(tournament => {
             return res.send(tournament);
         }).catch(err => {
+            console.log(err);
             return res.sendStatus(500).send({
                 message: err.message || "some error occured"
             })

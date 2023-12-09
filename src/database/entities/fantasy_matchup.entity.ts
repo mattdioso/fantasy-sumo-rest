@@ -21,11 +21,15 @@ export class FantasyMatchupEntity {
     @Column()
     day3: number;
 
-    @OneToOne(() => TeamEntity)
+    @ManyToOne(() => TeamEntity, {
+        eager: true
+    })
     @JoinColumn()
     team1: TeamEntity;
 
-    @OneToOne(() => TeamEntity)
+    @ManyToOne(() => TeamEntity, {
+        eager: true
+    })
     @JoinColumn()
     team2: TeamEntity;
 

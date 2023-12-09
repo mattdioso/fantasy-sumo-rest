@@ -12,6 +12,15 @@ users = {
     "johndickey": "d2d8c6f5-4a51-4b8f-8cbd-d0c01f91e106"
 }
 
+teams = {
+    "mattdioso": "43adb1ae-62e7-4e9b-bff4-24bdd1be801d",
+    "maxwellcromett": "4faeba36-bc73-4866-9aaa-506d6cca43c5",
+    "alexozkan": "6b9014b5-2d17-4afa-9f35-7676e9b2e3a4",
+    "jamesteban": "0cddedde-eee2-4c7c-b3a8-441fbb400eac",
+    "karina": "fe073c4e-8b38-4449-91e1-9d4a20d369a2",
+    "johndickey": "7651f8b9-2005-46d0-a515-a88d0e21149f"
+}
+
 matchups = {
     "matchups": [
         {
@@ -172,9 +181,16 @@ for matchup in matchups['matchups']:
             "day1": days[0],
             "day2": days[1],
             "day3": days[2],
-            "team1": users[pair['team1']],
-            "team2": users[pair['team2']],
+            "team1": {
+                "id": teams[pair['team1']]
+            },
+            "team2": {
+                "id": teams[pair['team2']]
+            },
             "team1_score": 0,
             "team2_score": 0,
             "matches": []
         }
+        print(matchup_payload)
+        res = requests.post('http://localhost:5000/api/fantasy_matchups', json=matchup_payload)
+        print(res.status_code)
