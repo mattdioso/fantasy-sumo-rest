@@ -27,4 +27,10 @@ export class TeamEntity {
     })
     @JoinTable()
     wrestlers: WrestlerEntity[];
+
+    @Column({type: 'int', default: 0, nullable: true})
+    wins: number;
+
+    @Column({type: 'int', default: 0, nullable: true})
+    losses: number;
 }

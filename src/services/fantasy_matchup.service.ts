@@ -69,7 +69,10 @@ export class FantasyMatchupService {
                 matchup.matches[i] = match!;
             }
             
+        } else {
+            await this.fantasy_matchup_repository.update(id, matchup);
         }
+
         //await this.fantasy_matchup_repository.update(id, {"matches": matchup.matches});
         return await this.fantasy_matchup_repository.findOne({
             where: {

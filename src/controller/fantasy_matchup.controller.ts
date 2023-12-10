@@ -46,7 +46,9 @@ export class FantasyMatchupController {
     }
 
     public update = async(req: Request, res: Response) => {
+        console.log(req['params']['id']);
         const tournament = req['body'] as FantasyMatchupEntity;
+        console.log(tournament);
         const id = req['params']['id'];
         await this.fantasyMatchupService.update(tournament, id).then(updated_matchup => {
             return res.send(updated_matchup);

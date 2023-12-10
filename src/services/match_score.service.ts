@@ -65,7 +65,7 @@ export class MatchScoreService {
     }
 
     public get_match_score = async(match_id: string) => {
-        console.log(match_id);
+        
         let match = await this.match_repository.findOne({
             where: {
                 id: match_id
@@ -75,7 +75,7 @@ export class MatchScoreService {
                         .leftJoinAndSelect('match_scores.match', 'match')
                         .where("match_scores.match.id = :matchId ", {matchId: match_id} )
                         .getOne();
-        console.log(res);
+        
         return res;
     }
 

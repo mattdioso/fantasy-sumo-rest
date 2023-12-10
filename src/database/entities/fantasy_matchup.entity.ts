@@ -33,10 +33,16 @@ export class FantasyMatchupEntity {
     @JoinColumn()
     team2: TeamEntity;
 
-    @Column()
+    @Column({
+        type: 'float',
+        nullable: true
+    })
     team1_score: number;
 
-    @Column()
+    @Column({
+        type: 'float',
+        nullable: true
+    })
     team2_score: number;
 
     @OneToMany(() => MatchEntity, (match: MatchEntity) => match.fantasy_matchup, {
