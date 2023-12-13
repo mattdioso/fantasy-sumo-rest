@@ -33,4 +33,7 @@ export class TeamEntity {
 
     @Column({type: 'int', default: 0, nullable: true})
     losses: number;
+
+    @Column({type: 'float', default: 0, nullable: true})
+    total_points: number;
 }

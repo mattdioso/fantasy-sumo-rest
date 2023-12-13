@@ -132,6 +132,7 @@ export class MatchScoreService {
                 id: winTechniqueId
             }
         });
+        //0 means they won; i should change this to boolean
         if(win1 === 0) {
             let diff = i1 - i2;
             if (diff > 0) {

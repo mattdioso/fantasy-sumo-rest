@@ -2,6 +2,7 @@ import { getConnection, getCustomRepository } from "typeorm";
 import { FantasyTournamentEntity } from "../database/entities/fantasy_tournament.entity";
 import { FantasyTournamentRepository } from "../repository/fantasy_tournament.repository";
 import dataSource from "../database/ormconfig";
+import { TeamEntity } from "../database/entities/team.entity";
 
 export class FantasyTournamentService {
     private fantasy_tournament_repository: FantasyTournamentRepository;
@@ -23,6 +24,19 @@ export class FantasyTournamentService {
             }
         });
         return fantasy;
+    }
+
+    public get_fantasy_tournament_teams = async(id: string) => {
+        let fantasy_tournament = await this.fantasy_tournament_repository.findOne({
+            where: {
+                id: id
+            }
+        });
+        let res = this.fantasy_tournament_repository.createQueryBuilder()
+            .relation(TeamEntity, "fantasy_tournament")
+            .of(fantasy_tournament).loadMany();
+            
+        return res;
     }
 
     public create = async(fantasy: FantasyTournamentEntity) => {

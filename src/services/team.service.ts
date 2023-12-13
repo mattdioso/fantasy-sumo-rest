@@ -148,7 +148,13 @@ export class TeamService {
             }
         }
         console.log("added wrestlers");
-        
+        if (team.total_points) {
+            await this.team_repository.update(id, team).then(() => {
+                console.log('team updated');
+            }).catch(err => {
+                console.log(err);
+            })
+        }
         return await this.team_repository.findOne({
             where: {
                 id: id

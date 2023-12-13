@@ -1,6 +1,8 @@
 import { Router, Response, Request } from 'express';
 import { FantasyTournamentEntity } from '../database/entities/fantasy_tournament.entity';
 import { FantasyTournamentService } from '../services/fantasy_tournament.service';
+import { TournamentController } from './tournament.controller';
+import { TeamEntity } from '../database/entities/team.entity';
 
 export class FantasyTournamentController {
     public router: Router;
@@ -33,6 +35,7 @@ export class FantasyTournamentController {
             })
         });
     }
+
 
     public create = async(req: Request, res: Response) => {
         const tourney = req['body'] as FantasyTournamentEntity;
