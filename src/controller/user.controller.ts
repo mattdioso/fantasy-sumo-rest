@@ -60,7 +60,7 @@ export class UserController {
     public avatar = async (req: Request, res: Response) => {
         const id = req['params']['id'];
         await this.userService.get_user(id).then(user => {
-            let path = resolve(__dirname + `/../../python/user_pics/${user!.lastname}.jpg`);
+            let path = resolve(__dirname + `/../../../python/user_pics/${user!.lastname}.jpg`);
             return res.sendFile(path);
         }).catch(err => {
             return res.sendStatus(500).send({
