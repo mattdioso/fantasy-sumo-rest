@@ -63,6 +63,7 @@ export class UserController {
             let path = resolve(__dirname + `/../../../python/user_pics/${user!.lastname}.jpg`);
             return res.sendFile(path);
         }).catch(err => {
+            console.log(err);
             return res.sendStatus(500).send({
                 message: err.message || "some error occured"
             })

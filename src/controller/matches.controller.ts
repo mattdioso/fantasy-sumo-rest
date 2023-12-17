@@ -31,6 +31,7 @@ export class MatchController {
         await this.matchService.get_match(id).then(result => {
             return res.send(result);
         }).catch(err => {
+            console.log(err);
             return res.sendStatus(500).send({
                 message: err.message || "some error occured"
             })

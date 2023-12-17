@@ -65,7 +65,7 @@ export class FantasyMatchupService {
                 });
                 await dataSource.createQueryBuilder().relation(FantasyMatchupEntity, "matches")
                 .of(id)
-                .add(match);
+                .add(match)
                 matchup.matches[i] = match!;
             }
             
