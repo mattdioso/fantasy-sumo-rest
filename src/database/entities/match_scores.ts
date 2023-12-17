@@ -20,7 +20,7 @@ export class MatchScores {
     })
     day: number;
 
-    @OneToOne(() => MatchEntity)
+    @OneToOne(() => MatchEntity, match => match.match_score)
     @JoinColumn()
     match: MatchEntity;
 

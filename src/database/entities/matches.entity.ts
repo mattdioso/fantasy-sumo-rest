@@ -5,6 +5,7 @@ import { WrestlerEntity } from './wrestler.entity';
 import { TournamentEntity } from './tournament.entity';
 import { FantasyMatchupController } from '../../controller/fantasy_matchup.controller';
 import { FantasyMatchupEntity } from './fantasy_matchup.entity';
+import { MatchScores } from './match_scores';
 
 @Entity('matches')
 export class MatchEntity {
@@ -51,4 +52,9 @@ export class MatchEntity {
 
     @ManyToOne(() => FantasyMatchupEntity, (matchup: FantasyMatchupEntity) => matchup.matches)
     fantasy_matchup: FantasyMatchupEntity;
+
+    @OneToOne(() => MatchScores, score => score.match, {
+        eager: true
+    })
+    match_score: MatchScores;
 }

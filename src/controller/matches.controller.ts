@@ -19,6 +19,7 @@ export class MatchController {
         await this.matchService.index().then(result => {
             return res.send(JSON.stringify(result));
         }).catch(err => {
+            console.log(err);
             return res.sendStatus(500).send({
                 message: err.message || "some error occured on the server"
             })
