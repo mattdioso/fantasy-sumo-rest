@@ -94,21 +94,19 @@ export class MatchScoreService {
                             .relation(MatchEntity, "tournament")
                             .of(match)
                             .loadOne();
-        let winning_wrestler = "";
+        let winning_wrestler = match.wrestler1;
         let winning_technique = match.winTechniqueId;
-        if (match.win1 === 0) {
-            winning_wrestler = match.idWrestler1;
-        } else {
-            winning_wrestler = match.idWrestler2;
-        }
-        let score = await this.calculate_score(match.idWrestler1, match.idWrestler2, match.win1, match.win2, winning_technique);
+        if (match.win2 === true) {
+            winning_wrestler = match.wrestler2;
+        } 
+        let score = await this.calculate_score(match.wrestler1, match.wrestler2, match.win1, match.win2, winning_technique);
         let match_score = await this.match_score_repository.create();
         match_score.day = day;
         match_score.match = match;
         match_score.tournament = tournament;
         let winner = await this.wrestler_repository.findOne({
             where: {
-                id: winning_wrestler
+                id: winning_wrestler.id
             }
         }) as WrestlerEntity;
         match_score.wrestler = winner;
@@ -119,9 +117,50 @@ export class MatchScoreService {
         return match_score;
     }
 
-    private calculate_score = async(wrestler1: string, wrestler2: string, win1: number, win2: number, winTechniqueId: string) => {
-        let rank1 = await this.ranking_repository.findOne( {where: { idWrestler: wrestler1 }}) as RankingsEntity;
-        let rank2 = await this.ranking_repository.findOne({where: { idWrestler: wrestler2 }}) as RankingsEntity;
+    public recalculate_match_score = async(match_id: string) => {
+        let match = await this.match_repository.findOne({
+            where: {
+                id: match_id
+            }
+        });
+        let match_score = match!.match_score;
+        let original_score = match_score.score;
+        let wrestler1 = match!.wrestler1;
+        let wrestler2 = match!.wrestler2;
+        let win1 = match!.win1;
+        let win2 = match!.win2;
+        let winTechniqueId = match!.winTechniqueId;
+        let update = false;
+        let new_score = await this.calculate_score(wrestler1, wrestler2, win1, win2, winTechniqueId)
+        // let new_score = await this.calculate_score(wrestler1, wrestler2, win1, win2, winTechniqueId).then(res => {
+        //     console.log("original score: " + original_score + " new score: " + res);
+        //     if (original_score !== res) {
+        //         console.log("need to update the score");
+        //         update = true;
+        //         match_score.score = res;
+        //     }
+        // });
+        console.log("original score: " + original_score + " new score: " + new_score);
+        if (original_score !== new_score) {
+            console.log("need to update the score");
+            update = true;
+            match_score.score = new_score;
+        }
+        
+        if (update) {
+           await this.match_score_repository.update(match_score.id, {score: new_score}).then(() => {
+                console.log("successful update");
+            }).catch(err => {
+                console.log(err)
+            })
+        }
+        
+        return match;
+    }
+
+    private calculate_score = async(wrestler1: WrestlerEntity, wrestler2: WrestlerEntity, win1: boolean, win2: boolean, winTechniqueId: string) => {
+        let rank1 = await this.ranking_repository.findOne( {where: { idWrestler: wrestler1.id }}) as RankingsEntity;
+        let rank2 = await this.ranking_repository.findOne({where: { idWrestler: wrestler2.id }}) as RankingsEntity;
         console.log("RANK 1: " + rank1.rank + " RANK 2: " + rank2.rank);
         let i1 = Rank.indexOf(rank1.rank);
         let i2 = Rank.indexOf(rank2.rank);
@@ -133,7 +172,7 @@ export class MatchScoreService {
             }
         });
         //0 means they won; i should change this to boolean
-        if(win1 === 0) {
+        if(win1 === true) {
             let diff = i1 - i2;
             if (diff > 0) {
                 score = 1 + (diff / 10);

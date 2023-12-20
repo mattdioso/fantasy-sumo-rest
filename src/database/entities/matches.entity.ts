@@ -12,25 +12,31 @@ export class MatchEntity {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
-    @Column()
-    @ManyToOne(() => WrestlerEntity, idWrestler1 => idWrestler1.id)
-    idWrestler1: string;
+    
+    @ManyToOne(() => WrestlerEntity, {
+        eager: true
+    })
+    @JoinColumn()
+    wrestler1: WrestlerEntity;
 
     @Column()
-    win1: number;
+    win1: boolean;
 
     @Column()
-    winByForfeit1: number;
+    winByForfeit1: boolean;
 
-    @Column()
-    @ManyToOne(() => WrestlerEntity, idWrestler2 => idWrestler2.id)
-    idWrestler2: string;
+    
+    @ManyToOne(() => WrestlerEntity, {
+        eager: true
+    })
+    @JoinColumn()
+    wrestler2: WrestlerEntity;
     
     @Column()
-    win2: number;
+    win2: boolean;
 
     @Column()
-    winByForfeit2: number;
+    winByForfeit2: boolean;
 
     @Column()
     @ManyToOne(() => TechniqueEntity, winTechnique => winTechnique.id)

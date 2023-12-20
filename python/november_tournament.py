@@ -15,16 +15,21 @@ sumo_headers = {
   "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36"
 }
 def find_wrestler_id(wrestler):
-  print(wrestler)
+  #print(wrestler)
   search_url = "http://localhost:5000/api/wrestlers/search"
   json_body = {
     "ringname": wrestler
   }
   res = requests.post(search_url, headers=sumo_headers, json=json_body)
-  return res.json()['id']
+  results = res.json()
+  wrestler_id = ""
+  for wrestler_json in results:
+      if wrestler_json['ringname'] == wrestler:
+          wrestler_id = wrestler_json['id']
+  return wrestler_id
 
 def find_technique_id(technique):
-  print(technique)
+  #print(technique)
   search_url="http://localhost:5000/api/techniques/search"
   json_body = {
     "technique": technique
@@ -35,10 +40,10 @@ def find_technique_id(technique):
 def create_match(east_id, east_win, west_id, west_win, technique_id, forfeit_one, forfeit_two, match_num, day):
   match_url = "http://localhost:5000/api/matches"
   match_body = {
-    "idWrestler1": east_id,
+    "wrestler1": east_id,
     "win1": east_win,
     "winByForfeit1": forfeit_one,
-    "idWrestler2": west_id,
+    "wrestler2": west_id,
     "win2": west_win,
     "winByForfeit2": forfeit_two,
     "winTechniqueId": technique_id,
@@ -46,9 +51,12 @@ def create_match(east_id, east_win, west_id, west_win, technique_id, forfeit_one
     "day": day,
     "tournament": "1faf296f-1e65-4572-8ad5-7d977c200cc5"
   }
+  if east_id == "fbab866a-5682-4659-b52c-a45912dbf5b2" or west_id == "fbab866a-5682-4659-b52c-a45912dbf5b2":
+      print(match_body)
   res = requests.post(match_url, json=match_body)
-  print(res.json())
+#  print(res.json())
   return res.json()['id']
+#  return ""
 
 def create_day(day_num, matches):
   day_url = "http://localhost:5000/api/days"
@@ -79,17 +87,20 @@ def process_tr(tr, match_num, day_num):
   technique_id = find_technique_id(technique.text.strip())
   forfeit_one = 1
   forfeit_two = 1
+  if east_wrestler == "Oho" or west_wrestler == "Oho":
+      print("found Oho, here's the ids")
+      print(east_wrestler_id, west_wrestler_id)
   if east_won:
     if technique == "fusen":
-      forfeit_one = 0
+      forfeit_one = True
     print("%s beat %s using %s"% (east_wrestler, west_wrestler, technique.text))
-    match_id = create_match(east_wrestler_id, 0, west_wrestler_id, 1, technique_id, forfeit_one, forfeit_two, match_num, day_num)
+    match_id = create_match(east_wrestler_id, True, west_wrestler_id, False, technique_id, forfeit_one, forfeit_two, match_num, day_num)
     return match_id
   else:
     if technique == "fusen":
       forfeit_two = 1
     print("%s beat %s using %s"% (west_wrestler, east_wrestler, technique.text))
-    match_id = create_match(east_wrestler_id, 1, west_wrestler_id, 0, technique_id, forfeit_one, forfeit_two, match_num, day_num)
+    match_id = create_match(east_wrestler_id, False, west_wrestler_id, True, technique_id, forfeit_one, forfeit_two, match_num, day_num)
     return match_id
 
 
@@ -107,7 +118,7 @@ s = requests.Session()
 matches =[]
 for i in range(1, 16):
 #  matches=[]
-  print(i)
+#  print(i)
   tournament_payload = {
     "basho_id": 608,
     "day": i
@@ -139,5 +150,6 @@ tournament_update = {
 }
 res = requests.put(api_url + "/tournaments/" + tournament_id, json=tournament_update)
 print(res.json())
+print("done")
 
 

@@ -25,7 +25,7 @@ export class SearchService {
         const result = this.wrestler_repository.createQueryBuilder()
         .select()
         .where('ringname ILIKE :searchTerm', {searchTerm: `%${wrestler}%`})
-        .getOne();
+        .getMany();
 
         return result;
     }

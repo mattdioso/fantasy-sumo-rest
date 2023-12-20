@@ -60,6 +60,19 @@ export class MatchController {
         });
     }
 
+    public recalculate_match_score = async(req: Request, res: Response) => {
+        let id = req['params']['id'];
+        console.log("in recalculate")
+        await this.match_score_service.recalculate_match_score(id).then(ret => {
+            return res.send(ret);
+        }).catch(err => {
+            console.log(err);
+            return res.sendStatus(500).send({
+                message: err.message || "some error occured"
+            })
+        });
+    }
+
     public create = async (req: Request, res: Response) => {
         const match = req['body'] as MatchEntity;
         const new_match = await this.matchService.create(match);
@@ -85,6 +98,7 @@ export class MatchController {
         this.router.get('/:id/score', this.get_match_score);
         this.router.post('/', this.create);
         this.router.post('/:id/score', this.create_match_score);
+        this.router.put('/:id/score', this.recalculate_match_score);
         this.router.put('/:id', this.update);
         this.router.delete('/:id', this.delete);
     }

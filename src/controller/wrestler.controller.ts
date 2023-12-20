@@ -3,15 +3,18 @@ import { WrestlerEntity } from '../database/entities/wrestler.entity';
 import { SearchService } from '../services/search.service';
 import { WrestlerService } from '../services/wrestler.service';
 import { resolve } from 'path';
+import { MatchService } from '../services/matches.service';
 
 export class WrestlerController {
     public router: Router;
     private wrestlerService: WrestlerService;
+    private matchService: MatchService;
     private searchService: SearchService;
 
     constructor() {
         this.wrestlerService = new WrestlerService();
         this.searchService = new SearchService();
+        this.matchService = new MatchService();
         this.router = Router();
         this.routes();
     }
@@ -32,6 +35,18 @@ export class WrestlerController {
         await this.wrestlerService.get_wrestler(id).then(wrestler => {
             return res.send(wrestler);
         }) .catch(err => {
+            return res.sendStatus(500).send({
+                message: err.message || "some error occured"
+            })
+        });
+    }
+
+    public get_wrestler_matches = async(req: Request, res: Response) => {
+        let id = req['params']['id'];
+        await this.matchService.get_wrestler_match(id).then(matches => {
+            return res.send(matches);
+        }).catch(err => {
+            console.log(err);
             return res.sendStatus(500).send({
                 message: err.message || "some error occured"
             })
@@ -93,10 +108,11 @@ export class WrestlerController {
         const id = req['params']['id'];
         await this.wrestlerService.get_wrestler(id).then(wrestler => {
 
-            let path = resolve(__dirname + `/../../../python/sumo_pics/${wrestler!.ringname}.jpg`);
+            let path = resolve(__dirname + `/../../python/sumo_pics/${wrestler!.ringname}.jpg`);
             return res.sendFile(path);
         
         }).catch(err => {
+            console.log(err)
             return res.sendStatus(500).send({
                 message: err.message || "some error occured"
             })
@@ -106,9 +122,10 @@ export class WrestlerController {
     public icon = async (req: Request, res: Response) => {
         const id = req['params']['id'];
         await this.wrestlerService.get_wrestler(id).then(wrestler => {
-            let path = resolve(__dirname + `/../../../python/sumo_icons/${wrestler!.ringname}_icon.jpg`);
+            let path = resolve(__dirname + `/../../python/sumo_icons/${wrestler!.ringname}_icon.jpg`);
             return res.sendFile(path);
         }).catch(err => {
+            console.log(err)
             return res.sendStatus(500).send({
                 message: err.message || "some error occured"
             })
@@ -131,6 +148,7 @@ export class WrestlerController {
     public routes() {
         this.router.get('/', this.index);
         this.router.get('/:id', this.get_wrestler);
+        this.router.get('/:id/matches', this.get_wrestler_matches);
         this.router.get('/:id/avatar', this.avatar);
         this.router.get('/:id/icon', this.icon);
         this.router.post('/', this.create);

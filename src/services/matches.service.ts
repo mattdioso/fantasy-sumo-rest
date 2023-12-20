@@ -30,6 +30,14 @@ export class MatchService {
         return match;
     }
 
+    public get_wrestler_match = async(wrestler_id: string) => {
+        let matches = await this.match_repository.createQueryBuilder()
+        .where("MatchEntity.wrestler1Id = :id", {id: wrestler_id})
+        .orWhere("MatchEntity.wrestler2Id = :id", {id: wrestler_id}).getMany();
+
+        return matches;        
+    }
+
     public create = async (match: MatchEntity) => {
         const new_match = await this.match_repository.create(match);
         await this.match_repository.save(new_match);

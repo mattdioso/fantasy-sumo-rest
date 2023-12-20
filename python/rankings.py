@@ -35,13 +35,18 @@ def find_wrestler_id(wrestler):
     "ringname": wrestler
   }
   res = requests.post(search_url, json=json_body)
-  return res.json()['id']
+  results = res.json()
+  wrestler_id = ""
+  for wrestler_json in results:
+      if wrestler_json['ringname'] == wrestler:
+          wrestler_id = wrestler_json['id']
+  return wrestler_id
 
 banzuke_url = "http://sumodb.sumogames.de/Banzuke.aspx?b=202311&heya=-1&shusshin=-1#J"
 page = requests.get(banzuke_url)
 soup = BeautifulSoup(page.content, 'html.parser')
 tables = soup.find_all(class_="banzuke")
-body = tables[0].select("tbody")[0]
+body = tables[5].select("tbody")[0]
 rows = body.find_all("tr")
 for row in rows:
   tds = row.find_all("td")

@@ -13,6 +13,7 @@ fantasy_matchups = res.json()
 print(len(fantasy_matchups))
 num_matches = 0
 matches_set = set()
+query = "6be98de5-5b37-4a61-afe5-2e1d672789ff"
 for matchup in fantasy_matchups:
     matchup_id = matchup['id']
     day1 = matchup['day1']
@@ -23,6 +24,8 @@ for matchup in fantasy_matchups:
     print(team1['teamname'] + " vs. " + team2['teamname'] + " " + matchup_id)
     json_matches = matches
     day1_matches = [x for x in json_matches if x['day'] == day1]
+    if day1 == 13:
+        print("day 13 matches: " + str(len(day1_matches)))
     day2_matches = [x for x in json_matches if x['day'] == day2]
     day3_matches = [x for x in json_matches if x['day'] == day3]
     #print(len(day1_matches))
@@ -36,33 +39,39 @@ for matchup in fantasy_matchups:
     #print(team2_wrestlers)
     for wrestler in team1_wrestlers:
         wrestler_id = wrestler['id']
-        wrestler_day1_matches = [x for x in day1_matches if x['idWrestler1'] == wrestler_id or x['idWrestler2'] == wrestler_id]
-        wrestler_day2_matches = [x for x in day2_matches if x['idWrestler1'] == wrestler_id or x['idWrestler2'] == wrestler_id]
-        wrestler_day3_matches = [x for x in day3_matches if x['idWrestler1'] == wrestler_id or x['idWrestler2'] == wrestler_id]
+        wrestler_day1_matches = [x for x in day1_matches if x['wrestler1']['id'] == wrestler_id or x['wrestler2']['id'] == wrestler_id]
+        wrestler_day2_matches = [x for x in day2_matches if x['wrestler1']['id'] == wrestler_id or x['wrestler2']['id'] == wrestler_id]
+        wrestler_day3_matches = [x for x in day3_matches if x['wrestler1']['id'] == wrestler_id or x['wrestler2']['id'] == wrestler_id]
         all_matches = wrestler_day1_matches + wrestler_day2_matches + wrestler_day3_matches
-        print(len(all_matches))
         for match in all_matches:
             if match['id'] not in matches_set:
                 process_matches.append(match)
                 matches_set.add(match['id'])
     for wrestler in team2_wrestlers:
         wrestler_id = wrestler['id']
-        wrestler_day1_matches = [x for x in day1_matches if x['idWrestler1'] == wrestler_id or x['idWrestler2'] == wrestler_id]
-        wrestler_day2_matches = [x for x in day2_matches if x['idWrestler1'] == wrestler_id or x['idWrestler2'] == wrestler_id]
-        wrestler_day3_matches = [x for x in day3_matches if x['idWrestler1'] == wrestler_id or x['idWrestler2'] == wrestler_id]
+        wrestler_day1_matches = [x for x in day1_matches if x['wrestler1']['id'] == wrestler_id or x['wrestler2']['id'] == wrestler_id]
+        wrestler_day2_matches = [x for x in day2_matches if x['wrestler1']['id'] == wrestler_id or x['wrestler2']['id'] == wrestler_id]
+        wrestler_day3_matches = [x for x in day3_matches if x['wrestler1']['id'] == wrestler_id or x['wrestler2']['id'] == wrestler_id]
         all_matches = wrestler_day1_matches + wrestler_day2_matches + wrestler_day3_matches
-        
         for match in all_matches:
             if match['id'] not in matches_set:
                 process_matches.append(match)
                 matches_set.add(match['id'])
-    print(len(process_matches))
+    print("sorted this many matches: " + str(len(process_matches)))
     matches_payload = {
         "matches": process_matches
     }
     #print(len(process_matches))
     num_matches += len(process_matches)
-    #res = requests.put('http://localhost:5000/api/fantasy_matchups/' + matchup_id, json=matches_payload)
-
-print(num_matches)
-
+    res = requests.put('http://localhost:5000/api/fantasy_matchups/' + matchup_id, json=matches_payload)
+    json_res = res.json()
+    print(len(json_res['matches']))
+    print(len(process_matches))
+    if len(process_matches) != len(json_res['matches']):
+        print("this is fucked up: " + json_res['id'])
+#print(len(matches_set))
+#print(num_matches)
+#missing_matches = [x for x in matches if x['id'] not in matches_set]
+#print(missing_matches)
+#if query in matches_set:
+#    print("it has the match")
