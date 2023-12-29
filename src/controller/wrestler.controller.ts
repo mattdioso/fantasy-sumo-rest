@@ -55,7 +55,7 @@ export class WrestlerController {
 
     public create = async (req: Request, res: Response) => {
         const wrestler = req['body'] as WrestlerEntity;
-        console.log(wrestler);
+        //console.log(wrestler);
         await this.wrestlerService.create(wrestler).then(new_wrestler => {
             return res.send(new_wrestler);
         }).catch(err => {

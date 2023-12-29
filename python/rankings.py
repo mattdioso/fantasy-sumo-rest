@@ -27,7 +27,7 @@ def create_ranking(rank, wins, losses, division, wrestler):
   }
   rank_url = "http://localhost:5000/api/rankings"
   res = requests.post(rank_url, json=rank_payload)
-#  print(res.json())
+  print(res.json())
 
 def find_wrestler_id(wrestler):
   search_url="http://localhost:5000/api/wrestlers/search"
@@ -47,27 +47,27 @@ page = requests.get(banzuke_url)
 soup = BeautifulSoup(page.content, 'html.parser')
 tables = soup.find_all(class_="banzuke")
 for i in range(0, 6):
-  body = tables[5].select("tbody")[0]
-  rows = body.find_all("tr")
-  for row in rows:
-    tds = row.find_all("td")
-    rank = tds[2].text
-  #  print(rank)
-    if tds[0].text and tds[1].text:
-  #    print(tds[2].a)
-      try:
-          west_record = tds[0].a.text.split(" ")[0]
-          west_name = tds[1].a.text
-          west_json_record = process_record(west_record)
-      except:
-          west_record = tds[3].a.text.split(" ")[0]
-          west_name = tds[2].a.text
-          west_json_record = process_record(west_record)
-      print(west_name + "\t wins: " + west_json_record['wins'] + "\t losses: " + west_json_record['losses'])
-      create_ranking(rank, west_json_record['wins'], west_json_record['losses'], "west", west_name)
-    if len(tds) > 4:
-      east_name = tds[3].a.text
-      east_record = tds[4].a.text.split(" ")[0]
-      east_json_record = process_record(east_record)
-      print(east_name + "\t wins: " + east_json_record['wins'] + "\t losses: " + west_json_record['losses'])
-      create_ranking(rank, east_json_record['wins'], east_json_record['losses'], "east", east_name)
+    body = tables[i].select("tbody")[0]
+    rows = body.find_all("tr")
+    for row in rows:
+        tds = row.find_all("td")
+        rank = tds[2].text
+        #  print(rank)
+        if tds[0].text and tds[1].text:
+        #    print(tds[2].a)
+            try:
+                west_record = tds[0].a.text.split(" ")[0]
+                west_name = tds[1].a.text
+                west_json_record = process_record(west_record)
+            except:
+                west_record = tds[3].a.text.split(" ")[0]
+                west_name = tds[2].a.text
+                west_json_record = process_record(west_record)
+            print(west_name + "\t wins: " + west_json_record['wins'] + "\t losses: " + west_json_record['losses'])
+            create_ranking(rank, west_json_record['wins'], west_json_record['losses'], "west", west_name)
+        if len(tds) > 4:
+            east_name = tds[3].a.text
+            east_record = tds[4].a.text.split(" ")[0]
+            east_json_record = process_record(east_record)
+            print(east_name + "\t wins: " + east_json_record['wins'] + "\t losses: " + west_json_record['losses'])
+            create_ranking(rank, east_json_record['wins'], east_json_record['losses'], "east", east_name)

@@ -25,4 +25,10 @@ export class UserEntity {
     })
     @JoinColumn()
     team: TeamEntity;
+
+    @Column({
+        type: "varchar",
+        nullable: true
+    })
+    avatar_store: string;
 }

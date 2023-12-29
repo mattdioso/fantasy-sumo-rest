@@ -22,7 +22,7 @@ export class SearchService {
     }
 
     public search_wrestler = async(wrestler: string) => {
-        const result = this.wrestler_repository.createQueryBuilder()
+        const result = await this.wrestler_repository.createQueryBuilder()
         .select()
         .where('ringname ILIKE :searchTerm', {searchTerm: `%${wrestler}%`})
         .getMany();

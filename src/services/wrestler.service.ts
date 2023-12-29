@@ -57,15 +57,19 @@ export class WrestlerService {
 
     public checkWrestlerExists = async (wrestler: WrestlerEntity) : Promise<Boolean> => {
         let ringname = wrestler['ringname'];
-        let ret = true;
+        let ret = false;
         await this.searchService.search_wrestler(ringname).then(result => {
-            if (result) {
-                ret = true;
-            } else {
-                ret =  false;
+            
+            if (result.length > 0) {
+                for (let i = 0 ; i < result.length; i++) {
+                    if (result[i].ringname === ringname) {
+                        ret= true;
+                    }
+                }
+                
             }
         });
-        console.log(ret);
+        //console.log(ret);
         return ret;
     }
 }

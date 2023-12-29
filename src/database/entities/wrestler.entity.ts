@@ -68,6 +68,18 @@ export class WrestlerEntity {
     })
     retired: boolean;
 
+    @Column({
+        type: "varchar",
+        nullable: true
+    })
+    avatar_store: string;
+
+    @Column({
+        type: "varchar",
+        nullable: true
+    })
+    icon_store: string;
+
     public getId(): string {
         return this.id;
     }
