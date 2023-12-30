@@ -6,8 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "tsc": "tsc ",
-    "start": "node ./build/server.js",
-    "typeorm": "ts-node-dev ./node_modules/typeorm/cli.js"
+    "start": "node --env-file=.env ./build/server.js",
+    "local": "node --env-file=.local.env ./build/server.js",
+    "typeorm": "ts-node-dev ./node_modules/typeorm/cli.js --config ./src/database/ormconfig.ts"
   },
   "author": "Matt Dioso",
   "license": "ISC",
