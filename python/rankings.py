@@ -19,18 +19,18 @@ def create_ranking(rank, wins, losses, division, wrestler):
   wrestler_id = find_wrestler_id(wrestler)
   rank_payload = {
     "rank": rank,
-    "idTournament": "1faf296f-1e65-4572-8ad5-7d977c200cc5",
+    "idTournament": "eef17dc9-f019-435d-84e3-759549f6ab6a",
     "wins": wins,
     "losses": losses,
     "division": division,
     "idWrestler": wrestler_id
   }
-  rank_url = "http://localhost:5000/api/rankings"
+  rank_url = "https://fantasy-sumo-409406.uw.r.appspot.com/api/rankings"
   res = requests.post(rank_url, json=rank_payload)
   print(res.json())
 
 def find_wrestler_id(wrestler):
-  search_url="http://localhost:5000/api/wrestlers/search"
+  search_url="https://fantasy-sumo-409406.uw.r.appspot.com/api/wrestlers/search"
   json_body = {
     "ringname": wrestler
   }
@@ -42,7 +42,7 @@ def find_wrestler_id(wrestler):
           wrestler_id = wrestler_json['id']
   return wrestler_id
 
-banzuke_url = "http://sumodb.sumogames.de/Banzuke.aspx?b=202311&heya=-1&shusshin=-1#J"
+banzuke_url = "http://sumodb.sumogames.de/Banzuke.aspx?b=202401&heya=-1&shusshin=-1"
 page = requests.get(banzuke_url)
 soup = BeautifulSoup(page.content, 'html.parser')
 tables = soup.find_all(class_="banzuke")

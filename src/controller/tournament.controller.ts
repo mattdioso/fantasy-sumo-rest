@@ -51,6 +51,7 @@ export class TournamentController {
         await this.tournamentService.create(tourney).then(new_tourney => {
             return res.send(new_tourney);
         }).catch(err => {
+            console.log(err)
             return res.sendStatus(500).send({
                 message: err.message || "some error occured"
             })

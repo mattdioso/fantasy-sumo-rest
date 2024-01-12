@@ -41,11 +41,24 @@ def scrape_sumo_info(uri, name):
   height = strip_height(height)
   weight = strip_weight(weight)
   names = family_name.split(' ')
-  print(ring_name.split(' ')[0] + "\tFamily Name: " + names[1]+ "\tGiven Name: " + names[0] + "\t"  + rank + "\t" + dob + "\t" + pob + "\t" + height + "\t" + weight)
+  """
+  try:
+    print(ring_name.split(' ')[0] + "\tFamily Name: " + names[1]+ "\tGiven Name: " + names[0] + "\t"  + rank + "\t" + dob + "\t" + pob + "\t" + height + "\t" + weight)
+  except:
+    print("ERROR")
+    print(" ".join(names) + "\t" + ring_name)
+  """
+  if len(names) > 1:
+    familyname = names[1]
+    givenname = names[0]
+  else:
+    familyname = ""
+    givenname=""
+    print(ring_name.split(' ')[0] + "\tFamily Name: " + familyname+ "\tGiven Name: " + givenname + "\t"  + rank + "\t" + dob + "\t" + pob + "\t" + height + "\t" + weight)
 
   post_data = {
-    "familyname": names[1],
-    "givenname": names[0],
+    "familyname": familyname,
+    "givenname": givenname,
     "ringname": name,
     "birthdate": dob,
     "birthplace": pob,
@@ -54,7 +67,7 @@ def scrape_sumo_info(uri, name):
     "retired": False
   }
 
-  response = requests.post('http://localhost:5000/api/wrestlers', json=post_data)
+  response = requests.post('https://fantasy-sumo-409406.uw.r.appspot.com/api/wrestlers', json=post_data)
   print(response.text)
   #download_avatar(img_uri, name)
 

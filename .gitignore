@@ -44,6 +44,7 @@ jspm_packages/
 
 **/sumo_pics/**
 *.jpg
+*.png
 
 
 # Snowpack dependency directory (https://snowpack.dev/)
