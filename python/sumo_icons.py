@@ -33,7 +33,7 @@ sumo_data = {
   "page": 1
 }
 
-page = requests.post(base_url + '/EnHonbashoBanzuke/indexAjax/6/2', headers=sumo_headers,
+page = requests.post(base_url + '/EnHonbashoBanzuke/indexAjax/6/1', headers=sumo_headers,
   files = {
     'kakuzuke_id': (None, sumo_data['kakuzuke_id']),
     'basho_id': (None, sumo_data['basho_id']),
@@ -47,4 +47,4 @@ for row in banzuke_info:
     name = row['shikona']
     filename= row['photo']
     print(name + '\t' + filename)
-    download_icon(filename, name)
+    #download_icon(filename, name)

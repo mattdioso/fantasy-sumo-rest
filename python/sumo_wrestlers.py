@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 import json
 import os
 import datetime
+from google.cloud import storage
 
 def convert_date(date_string):
   d = datetime.datetime.strptime(date_string, '%B %d, %Y')
@@ -17,16 +18,39 @@ def strip_height(height):
 def strip_weight(weight):
   return weight.split('.')[0]
 
-def download_avatar(uri, name):
+def upload_avatar(uri, name):
+  base_url = "https://sumo.or.jp"
   print('requesting.... ' + base_url + uri)
   page = requests.get(base_url + uri, headers=sumo_headers)
+  storage_client = storage.Client()
+  bucket = storage_client.bucket("fantasy-sumo-409406.appspot.com")
+  blob = bucket.blob('sumo_avatars/' + name + '.jpg')
+  data = page.content
+  if not blob.exists():
+    blob.upload_from_string(data)
   with open("./sumo_pics/" + name + '.jpg', 'wb') as file:
+    file.write(page.content)
+
+def upload_icon(uri, name):
+  base_url = "https://www.sumo.or.jp/img/sumo_data/rikishi/60x60/"
+  sumo_filename = uri.split("/")
+  sumo_filename = sumo_filename[len(sumo_filename) -1]
+  print('requesting.... ' + base_url + sumo_filename)
+  page = requests.get(base_url + uri, headers=sumo_headers)
+  storage_client = storage.Client()
+  bucket = storage_client.bucket("fantasy-sumo-409406.appspot.com")
+  blob = bucket.blob('sumo_icons/' + name + '_icon.jpg')
+  data = page.content
+  if not blob.exists():
+    blob.upload_from_string(data)
+  with open("./sumo_icons/" + name + '.jpg', 'wb') as file:
     file.write(page.content)
 
 def scrape_sumo_info(uri, name):
   page = requests.get(base_url + uri, headers=sumo_headers)
   soup = BeautifulSoup(page.content, 'html.parser')
   body = soup.find(id="mainContent").find_all(class_="mdColSet1")
+  #print(body)
   img_uri = body[0].find("img")["src"]
   rows = body[0].find_all("tr")
   ring_name = rows[0].find("td").text.replace('\n', '').strip()
@@ -64,12 +88,16 @@ def scrape_sumo_info(uri, name):
     "birthplace": pob,
     "height": int(height),
     "weight": int(weight),
-    "retired": False
+    "retired": False,
+    "avatar_store": "https://storage.googleapis.com/fantasy-sumo-409406.appspot.com/sumo_avatars/<ringname>.jpg".replace("<ringname>", name),
+    "icon_store": "https://storage.googleapis.com/fantasy-sumo-409406.appspot.com/sumo_icons/<ringname>_icon.jpg".replace("<ringname>", name)
   }
 
   response = requests.post('https://fantasy-sumo-409406.uw.r.appspot.com/api/wrestlers', json=post_data)
   print(response.text)
-  #download_avatar(img_uri, name)
+  if not "exists" in response.text:
+    upload_avatar(img_uri, name)
+    upload_icon(img_uri, name)
 
 if not os.path.exists('./sumo_pics'):
   os.makedirs('./sumo_pics')
@@ -93,23 +121,43 @@ sumo_data = {
 }
 
 base_url = "https://sumo.or.jp"
-
 page = requests.post(base_url + '/EnSumoDataRikishi/search/', headers=sumo_headers,
-  files = {
-    'p': (None, sumo_data['p']),
-    'v': (None, sumo_data['v']),
-    'kakuzuke_id': (None, sumo_data['kakuzuke_id'])
-  }
+    files = {
+        'p': 1,
+        'v': 50,
+        'kakuzuke_id': 1
+    }
 )
-
 soup = BeautifulSoup(page.content, 'html.parser')
-rows = soup.find("table", class_="mdTable3").find_all("tr")
-for row in rows:
-  data = row.find_all("td")
-  wrestler = data[0].get_text().replace('\n', '')
-  href = data[0].find("a")['href']
-  print(wrestler + "\t" + href)
-  scrape_sumo_info(href, wrestler)
 
+count_p = 1
+global_p = 10
+num_sumo_wrestlers = 0
+for i in range(1, 7):
+    print("kakuzuke_id: " + str(i))
+    count_p = 1
+    while count_p <= global_p:
+        print("page: " + str(count_p))
+        page = requests.post(base_url + '/EnSumoDataRikishi/search/', headers=sumo_headers,
+            files = {
+                'p': (None, count_p),
+                'v': 50,
+                'kakuzuke_id': (None, i)
+            }
+        )
+        soup = BeautifulSoup(page.content, 'html.parser')
+        global_p = int(soup.find("span", class_="resSearch").get_text().split("pages:")[1].split(")")[0])
+        count_p += 1
 
+        rows = soup.find("table", class_="mdTable3").find_all("tr")
+        #res = soup.find("span", class_="resSearch").get_text().split("pages:")[1].split(")")[0]
+        for row in rows:
+            data = row.find_all("td")
+            wrestler = data[0].get_text().replace('\n', '')
+            href = data[0].find("a")['href']
+            print(wrestler + "\t" + href)
+            num_sumo_wrestlers += 1
+            scrape_sumo_info(href, wrestler)
+
+print("total wrestlers processed: " + str(num_sumo_wrestlers))
 
