@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { TeamEntity } from "./team.entity";
 
 @Entity('users')
@@ -19,7 +19,7 @@ export class UserEntity {
     @Column()
     email: string;
 
-    @OneToOne(() => TeamEntity, team => team.user, {
+    @OneToMany(() => TeamEntity, team => team.user, {
         onDelete: "SET NULL",
         cascade: true
     })

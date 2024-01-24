@@ -51,7 +51,10 @@ def scrape_sumo_info(uri, name):
   soup = BeautifulSoup(page.content, 'html.parser')
   body = soup.find(id="mainContent").find_all(class_="mdColSet1")
   #print(body)
-  img_uri = body[0].find("img")["src"]
+  try:
+    img_uri = body[0].find("img")["src"]
+  except:
+    img_uri = ""
   rows = body[0].find_all("tr")
   ring_name = rows[0].find("td").text.replace('\n', '').strip()
   family_name = rows[2].find("td").text.replace('\n', '').strip()
@@ -95,7 +98,7 @@ def scrape_sumo_info(uri, name):
 
   response = requests.post('https://fantasy-sumo-409406.uw.r.appspot.com/api/wrestlers', json=post_data)
   print(response.text)
-  if not "exists" in response.text:
+  if not "exists" in response.text and img_uri != "":
     upload_avatar(img_uri, name)
     upload_icon(img_uri, name)
 
@@ -133,7 +136,7 @@ soup = BeautifulSoup(page.content, 'html.parser')
 count_p = 1
 global_p = 10
 num_sumo_wrestlers = 0
-for i in range(1, 7):
+for i in range(6, 7):
     print("kakuzuke_id: " + str(i))
     count_p = 1
     while count_p <= global_p:

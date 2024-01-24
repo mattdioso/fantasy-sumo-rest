@@ -62,6 +62,7 @@ export class TeamController {
         await this.teamService.update(team, id).then(updated_team => {
             return res.send(updated_team);
         }).catch(err => {
+            console.log(err);
             return res.sendStatus(500).send({
                 message: err.message || "some error occured"
             })

@@ -115,7 +115,7 @@ export class TeamService {
             console.log(user_id)
             // let user = await this.user_repository.findOne(user_id);
             // updated!.user = user!;
-            await getConnection("default").createQueryBuilder()
+            await this.team_repository.createQueryBuilder()
             .relation(TeamEntity, "user")
             .of(id)
             .set(user_id).catch(err => {console.log(err)});
@@ -124,7 +124,7 @@ export class TeamService {
         if (team.fantasy_tournament) {
             // let tournament = await this.tournament_repository.findOne(team.tournament);
             // updated!.tournament = tournament!;
-            await getConnection("default").createQueryBuilder()
+            await this.team_repository.createQueryBuilder()
             .relation(TeamEntity, "tournament")
             .of(id)
             .set(team.fantasy_tournament).catch(err => {console.log(err)});

@@ -14,7 +14,7 @@ export class TeamEntity {
     @Column()
     teamname: string;
 
-    @OneToOne(() => UserEntity, user => user.team, {
+    @ManyToOne(() => UserEntity, user => user.team, {
         eager: true
     })
     user: UserEntity;

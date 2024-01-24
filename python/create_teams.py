@@ -12,7 +12,8 @@ sumo_headers = {
   "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36"
 }
 
-fantasy_tournament = "26ab9b5a-d45d-4fa2-8373-933475fdf92f"
+#fantasy_tournament = "2ea49be1-cd3c-424c-8cb2-e7c829e34104"
+fantasy_tournament = "27a54dcc-50e8-4b2d-91e7-68f34a36754c"
 users = {
     "mattdioso": "8751360b-338e-463b-a067-4d118ae270a8",
     "maxwellcromett": "daf81bfd-0f9e-438b-9114-93a15c3d2f89",
@@ -26,78 +27,84 @@ teams = [
     {
         "name": "mattdioso",
         "wrestlers": [
-            "Kotonowaka",
-            "Atamifuji",
-            "Tohakuryu",
-            "Kinbozan",
-            "Wakamotoharu",
-            "Tsurugisho"
+            "Hoshoryu",
+            "Shimazuumi",
+            "Gonoyama",
+            "Bushozan",
+            "Meisei",
+            "Shonannoumi"
         ]
     },
     {
         "name": "maxwellcromett",
         "wrestlers": [
+            "Kotonowaka",
+            "Asanoyama",
             "Hokuseiho",
+            "Kinbozan",
             "Oho",
-            "Nishikifuji",
-            "Gonoyama",
-            "Nishikigi",
-            "Shodai"
+            "Nishikigi"
         ]
     },
     {
         "name": "alexozkan",
         "wrestlers": [
             "Kirishima", 
-            "Churanoumi",
-            "Takayasu",
-            "Mitakeumi",
-            "Ichiyamamoto",
-            "Ryuden"
+            "Onosato",
+            "Kotoshoho",
+            "Abi",
+            "Onosho",
+            "Aoiyama"
         ]
     },
     {
         "name": "jamesteban",
         "wrestlers": [
-            "Hoshoryu",
-            "Abi",
-            "Roga",
+            "Terunofuji",
+            "Takayasu",
+            "Mitakeumi",
+            "Takanosho",
             "Tobizaru",
-            "Onosho",
             "Hiradoumi"
         ]
     },
     {
         "name": "karina",
         "wrestlers": [
-            "Daieisho",
-            "Meisei",
-            "Tomokaze",
-            "Takanosho",
-            "Ura",
-            "Myogiryu"
+            "Atamifuji",
+            "Ichiyamamoto",
+            "Tsurugisho",
+            "Midorifuji",
+            "Ryuden",
+            "Churanoumi"
         ]
     },
     {
         "name": "johndickey",
         "wrestlers": [
             "Takakeisho",
-            "Kitanowaka",
+            "Daieisho",
+            "Ura",
+            "Wakamotoharu",
             "Hokutofuji",
-            "Midorifuji",
-            "Endo",
-            "Takarafuji"
+            "Shodai"
         ]
     }
 ]
 
 def find_wrestler_id(wrestler):
-  search_url = "http://localhost:5000/api/wrestlers/search"
+  #search_url = "https://rest-api-dot-fantasy-sumo-409406.uw.r.appspot.com/api/wrestlers/search"
+  search_url = "http://localhost:8080/api/wrestlers/search"
   json_body = {
     "ringname": wrestler
   }
-  res = requests.post(search_url, headers=sumo_headers, json=json_body)
-  return res.json()['id']
+  res = requests.post(search_url, json=json_body)
+  results = res.json()
+  wrestler_id = ""
+  for wrestler_json in results:
+      if wrestler_json['ringname'] == wrestler:
+          wrestler_id = wrestler_json['id']
+  return wrestler_id
 
 for item in teams:
     print(item['name'])
@@ -118,5 +125,6 @@ for item in teams:
         "wrestlers": wrestler_payload
     }
     print(team_payload)
-    res = requests.post('http://localhost:5000/api/teams', json=team_payload)
+    #res = requests.post('https://rest-api-dot-fantasy-sumo-409406.uw.r.appspot.com/api/teams', json=team_payload)
+    res = requests.post('http://localhost:8080/api/teams', json=team_payload)
     print(res.status_code)
