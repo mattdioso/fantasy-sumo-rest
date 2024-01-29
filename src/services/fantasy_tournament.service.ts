@@ -3,13 +3,17 @@ import { FantasyTournamentEntity } from "../database/entities/fantasy_tournament
 import { FantasyTournamentRepository } from "../repository/fantasy_tournament.repository";
 import dataSource from "../database/ormconfig";
 import { TeamEntity } from "../database/entities/team.entity";
+import { FantasyMatchupEntity } from "../database/entities/fantasy_matchup.entity";
+import { FantasyMatchupRepository } from "../repository/fantasy_matchup.repository";
 
 export class FantasyTournamentService {
     private fantasy_tournament_repository: FantasyTournamentRepository;
+    private fantasy_matchup_repository: FantasyMatchupRepository;
 
     constructor() {
         //this.fantasy_tournament_repository = getConnection("default").getRepository(FantasyTournamentEntity);
         this.fantasy_tournament_repository = dataSource.getRepository(FantasyTournamentEntity);
+        this.fantasy_matchup_repository = dataSource.getRepository(FantasyMatchupEntity);
     }
 
     public index = async() => {
@@ -36,6 +40,19 @@ export class FantasyTournamentService {
             .relation(TeamEntity, "fantasy_tournament")
             .of(fantasy_tournament).loadMany();
             
+        return res;
+    }
+
+    public get_fantasy_tournament_matches = async(id: string) => {
+        let fantasy_tournament = await this.fantasy_tournament_repository.findOne({
+            where: {
+                id: id
+            }
+        });
+        let res = this.fantasy_matchup_repository.createQueryBuilder()
+            .relation(FantasyTournamentEntity, "matches")
+            .of(fantasy_tournament).loadMany();
+
         return res;
     }
 

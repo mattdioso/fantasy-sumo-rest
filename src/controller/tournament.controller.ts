@@ -35,6 +35,18 @@ export class TournamentController {
         });
     }
 
+    public get_tournament_matches = async(req: Request, res: Response) => {
+        let id = req['params']['id'];
+        await this.tournamentService.get_tournament_matches(id).then(matches => {
+            return res.send(matches);
+        }).catch(err => {
+            console.log(err);
+            return res.sendStatus(500).send({
+                message: err.message || "some error occured"
+            })
+        });
+    }
+
     // public get_tournament_days = async(req: Request, res: Response) => {
     //   let id = req['params']['id'];
     //   await this.tournamentService.get_tournament(id).then(tournament => {
@@ -85,6 +97,7 @@ export class TournamentController {
     public routes() {
         this.router.get('/', this.index);
         this.router.get('/:id', this.get_tournaent);
+        this.router.get('/:id/matches', this.get_tournament_matches);
         // this.router.get('/:id/days', this.get_tournament_days);
         this.router.post('/', this.create);
         this.router.put('/:id', this.update);

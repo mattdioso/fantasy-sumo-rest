@@ -4,16 +4,20 @@ import { TournamentEntity } from "../database/entities/tournament.entity";
 import { DaysRepository } from "../repository/day.repository";
 import { TournamentRepository } from "../repository/tournament.repository";
 import dataSource from "../database/ormconfig";
+import { MatchRepository } from "../repository/matches.repository";
+import { MatchEntity } from "../database/entities/matches.entity";
 
 export class TournamentService {
     private tournament_repository: TournamentRepository;
     private days_repository: DaysRepository;
+    private match_repository: MatchRepository;
 
     constructor() {
         // this.tournament_repository = getConnection("default").getRepository(TournamentEntity);
         // this.days_repository = getConnection("default").getRepository(DaysEntity);
         this.tournament_repository = dataSource.getRepository(TournamentEntity);
         this.days_repository = dataSource.getRepository(DaysEntity);
+        this.match_repository = dataSource.getRepository(MatchEntity);
     }
 
     public index = async() => {
@@ -28,6 +32,18 @@ export class TournamentService {
             }
         });
         return tournament;
+    }
+
+    public get_tournament_matches = async(id: string) => {
+        let tournament = await this.tournament_repository.findOne({
+            where: {
+                id: id
+            }
+        });
+        let res = this.match_repository.createQueryBuilder()
+                    .relation(TournamentEntity, "matches")
+                    .of(tournament).loadMany();
+        return res;
     }
 
     public create = async (tournament: TournamentEntity) => {
@@ -50,6 +66,19 @@ export class TournamentService {
         //         .of(id)
         //         .add(tourament.days[i].id);
         // }
+        if (tourament.matches) {
+            for (let i = 0; i < tourament.matches.length; i++) {
+                let match = await this.match_repository.findOne({
+                    where: {
+                        id: tourament.matches[i].id
+                    }
+                });
+                await this.tournament_repository.createQueryBuilder()
+                        .relation(TournamentEntity, "matches")
+                        .of(id)
+                        .add(match).catch(err => {console.log(err)});
+            }
+        }
         return await this.tournament_repository.findOne({ 
             where: {
                 id: id

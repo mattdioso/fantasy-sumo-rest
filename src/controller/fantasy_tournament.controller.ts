@@ -36,6 +36,18 @@ export class FantasyTournamentController {
         });
     }
 
+    public get_tournament_matches = async(req: Request, res: Response) => {
+        let id = req['params']['id'];
+        await this.fantasyTournamentService.get_fantasy_tournament_matches(id).then(matches => {
+            return res.send(matches)
+        }).catch(err => {
+            console.log(err);
+            return res.sendStatus(500).send({
+                message: err.message || "some error occured"
+            })
+        });
+    }
+
 
     public create = async(req: Request, res: Response) => {
         const tourney = req['body'] as FantasyTournamentEntity;
@@ -74,6 +86,7 @@ export class FantasyTournamentController {
     public routes() {
         this.router.get('/', this.index);
         this.router.get('/:id', this.get_tournament);
+        this.router.get('/:id/matches', this.get_tournament_matches);
         this.router.post('/', this.create);
         this.router.put('/:id', this.update);
         this.router.delete('/:id', this.delete);
