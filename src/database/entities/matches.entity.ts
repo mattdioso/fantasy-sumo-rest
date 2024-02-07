@@ -56,7 +56,9 @@ export class MatchEntity {
     @ManyToOne(() => TournamentEntity, (tournament: TournamentEntity) => tournament.matches)
     tournament: TournamentEntity;
 
-    @ManyToOne(() => FantasyMatchupEntity, (matchup: FantasyMatchupEntity) => matchup.matches)
+    @ManyToOne(() => FantasyMatchupEntity, (matchup: FantasyMatchupEntity) => matchup.matches, {
+        onDelete: "SET NULL"
+    })
     fantasy_matchup: FantasyMatchupEntity;
 
     @OneToOne(() => MatchScores, score => score.match, {

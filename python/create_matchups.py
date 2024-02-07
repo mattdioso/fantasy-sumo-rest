@@ -2,7 +2,7 @@
 import requests
 import json
 
-fantasy_tournament = "26ab9b5a-d45d-4fa2-8373-933475fdf92f"
+fantasy_tournament = "2ea49be1-cd3c-424c-8cb2-e7c829e34104"
 users = {
     "mattdioso": "8751360b-338e-463b-a067-4d118ae270a8",
     "maxwellcromett": "daf81bfd-0f9e-438b-9114-93a15c3d2f89",
@@ -13,12 +13,12 @@ users = {
 }
 
 teams = {
-    "mattdioso": "43adb1ae-62e7-4e9b-bff4-24bdd1be801d",
-    "maxwellcromett": "4faeba36-bc73-4866-9aaa-506d6cca43c5",
-    "alexozkan": "6b9014b5-2d17-4afa-9f35-7676e9b2e3a4",
-    "jamesteban": "0cddedde-eee2-4c7c-b3a8-441fbb400eac",
-    "karina": "fe073c4e-8b38-4449-91e1-9d4a20d369a2",
-    "johndickey": "7651f8b9-2005-46d0-a515-a88d0e21149f"
+    "mattdioso": "d0940a66-fdb7-43f6-a167-960b8103b8c7",
+    "maxwellcromett": "c67cbadd-7a3d-47eb-96d8-536c07322f30",
+    "alexozkan": "1b5cb57d-155a-4c35-a1f3-2d6ed15f9b4f",
+    "jamesteban": "da130ce8-35d1-400c-9e19-3d5ffdac666b",
+    "karina": "bdbcbbbc-5a9a-44b3-baaf-922cb28f359e",
+    "johndickey": "7edee48d-cb4b-4794-b9d1-2e3deb05d4f4"
 }
 
 matchups = {
@@ -31,23 +31,23 @@ matchups = {
                 {
                     "team1": "alexozkan",
                     "team2": "mattdioso",
-                    "team1_score": 11.7,
-                    "team2_score": 11.1,
-                    "winner": "alexozkan"
+                    "team1_score": 9.1,
+                    "team2_score": 10.3,
+                    "winner": "mattdioso"
                 },
                 {
                     "team1": "maxwellcromett",
                     "team2": "johndickey",
-                    "team1_score": 6.6,
-                    "team2_score": 8.4,
-                    "winner": "johndickey"
+                    "team1_score": 13.4,
+                    "team2_score": 11.4,
+                    "winner": "maxwellcromett"
                 },
                 {
                     "team1": "karina",
                     "team2": "jamesteban",
-                    "team1_score": 7.2,
-                    "team2_score": 6.4,
-                    "winner": "karina"
+                    "team1_score": 3.2,
+                    "team2_score": 10.1,
+                    "winner": "jamesteban"
                 }
             ]
         },
@@ -59,23 +59,23 @@ matchups = {
                 {
                     "team1": "alexozkan",
                     "team2": "karina",
-                    "team1_score": 12.5,
-                    "team2_score": 9.7,
+                    "team1_score": 13,
+                    "team2_score": 11.1,
                     "winner": "alexozkan"
                 },
                 {
                     "team1": "johndickey",
                     "team2": "jamesteban",
-                    "team1_score": 8.3,
-                    "team2_score": 11.1,
+                    "team1_score": 7.6,
+                    "team2_score": 10.5,
                     "winner": "jamesteban"
                 },
                 {
                     "team1": "maxwellcromett",
                     "team2": "mattdioso",
-                    "team1_score": 9.5,
-                    "team2_score": 10.1,
-                    "winner": "mattdioso"
+                    "team1_score": 11.6,
+                    "team2_score": 7.6,
+                    "winner": "maxwellcromett"
                 }
 
             ]
@@ -88,23 +88,23 @@ matchups = {
                 {
                     "team1": "alexozkan",
                     "team2": "maxwellcromett",
-                    "team1_score": 14.3,
-                    "team2_score": 13.7,
+                    "team1_score": 12.6,
+                    "team2_score": 9,
                     "winner": "alexozkan"
                 },
                 {
                     "team1": "jamesteban",
                     "team2": "mattdioso",
-                    "team1_score": 6.2,
-                    "team2_score": 7.8,
+                    "team1_score": 7.9,
+                    "team2_score": 8.5,
                     "winner": "mattdioso"
                 },
                 {
                     "team1": "johndickey",
                     "team2": "karina",
-                    "team1_score": 7.3,
-                    "team2_score": 6.3,
-                    "winner": "johndickey"
+                    "team1_score": 7.9,
+                    "team2_score": 8.8,
+                    "winner": "karina"
                 }
 
             ]
@@ -117,22 +117,22 @@ matchups = {
                 {
                     "team1": "alexozkan",
                     "team2": "johndickey",
-                    "team1_score": 11.6,
-                    "team2_score": 9.6,
+                    "team1_score": 9.8,
+                    "team2_score": 4,
                     "winner": "alexozkan"
                 },
                 {
                     "team1": "mattdioso",
                     "team2": "karina",
-                    "team1_score": 13.5,
-                    "team2_score": 9.1,
+                    "team1_score": 13.2,
+                    "team2_score": 6.7,
                     "winner": "mattdioso"
                 },
                 {
                     "team1": "jamesteban",
                     "team2": "maxwellcromett",
-                    "team1_score": 10.2,
-                    "team2_score": 7.3,
+                    "team1_score": 11.4,
+                    "team2_score": 6.4,
                     "winner": "jamesteban"
                 }
             ]
@@ -145,22 +145,22 @@ matchups = {
                 {
                     "team1": "alexozkan",
                     "team2": "jamesteban",
-                    "team1_score": 14.6,
-                    "team2_score": 9.8,
+                    "team1_score": 11.8,
+                    "team2_score": 9.9,
                     "winner": "alexozkan"
                 },
                 {
                     "team1": "karina",
                     "team2": "maxwellcromett",
-                    "team1_score": 8.4,
-                    "team2_score": 9.6,
+                    "team1_score": 10.3,
+                    "team2_score": 12.4,
                     "winner": "maxwellcromett"
                 },
                 {
                     "team1": "mattdioso",
                     "team2": "johndickey",
-                    "team1_score": 11.6,
-                    "team2_score": 7.6,
+                    "team1_score": 7.3,
+                    "team2_score": 7,
                     "winner": "mattdioso"
                 }
             ]
@@ -192,5 +192,5 @@ for matchup in matchups['matchups']:
             "matches": []
         }
         print(matchup_payload)
-        res = requests.post('http://localhost:5000/api/fantasy_matchups', json=matchup_payload)
+        res = requests.post('https://rest-api-dot-fantasy-sumo-409406.uw.r.appspot.com/api/fantasy_matchups', json=matchup_payload)
         print(res.status_code)

@@ -17,6 +17,7 @@ export class FantasyTournamentEntity {
     name: string;
 
     @OneToOne(() => TournamentEntity)
+    @JoinColumn()
     tournament: TournamentEntity;
 
     @OneToMany(() => FantasyMatchupEntity, (fantasy_matchup: FantasyMatchupEntity) => fantasy_matchup.fantasy_tournament, {

@@ -2,13 +2,14 @@
 import json
 import requests
 
-fantasy_tournament = "1faf296f-1e65-4572-8ad5-7d977c200cc5"
-res = requests.get('http://localhost:5000/api/tournaments/' + fantasy_tournament)
+tournament = "eef17dc9-f019-435d-84e3-759549f6ab6a"
+fantasy_tournament = "2ea49be1-cd3c-424c-8cb2-e7c829e34104"
+res = requests.get('https://rest-api-dot-fantasy-sumo-409406.uw.r.appspot.com/api/tournaments/' + tournament)
 json_res = res.json()
 matches = json_res['matches'];
 print(len(matches))
 
-res = requests.get('http://localhost:5000/api/fantasy_matchups')
+res = requests.get('https://rest-api-dot-fantasy-sumo-409406.uw.r.appspot.com/api/fantasy_tournaments/' + fantasy_tournament + '/matches')
 fantasy_matchups = res.json()
 print(len(fantasy_matchups))
 num_matches = 0
@@ -24,8 +25,6 @@ for matchup in fantasy_matchups:
     print(team1['teamname'] + " vs. " + team2['teamname'] + " " + matchup_id)
     json_matches = matches
     day1_matches = [x for x in json_matches if x['day'] == day1]
-    if day1 == 13:
-        print("day 13 matches: " + str(len(day1_matches)))
     day2_matches = [x for x in json_matches if x['day'] == day2]
     day3_matches = [x for x in json_matches if x['day'] == day3]
     #print(len(day1_matches))
@@ -63,7 +62,7 @@ for matchup in fantasy_matchups:
     }
     #print(len(process_matches))
     num_matches += len(process_matches)
-    res = requests.put('http://localhost:5000/api/fantasy_matchups/' + matchup_id, json=matches_payload)
+    res = requests.put('https://rest-api-dot-fantasy-sumo-409406.uw.r.appspot.com/api/fantasy_matchups/' + matchup_id, json=matches_payload)
     json_res = res.json()
     print(len(json_res['matches']))
     print(len(process_matches))

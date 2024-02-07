@@ -18,3 +18,6 @@ then re-compile the .ts files
 
 then run the generated migration file (you might need to place the generated .js migration file under the build/migration directory manually)
     `typeorm migration:run -d build/database/ormconfig.js`
+
+To deploy to GCP cloud (any changes need to re-compiled first):
+    `gcloud app deploy`

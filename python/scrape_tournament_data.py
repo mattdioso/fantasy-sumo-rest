@@ -41,7 +41,7 @@ def find_technique_id(technique):
   #print(res)
   return res.json()['id']
 
-def create_match(east_id, east_win, west_id, west_win, technique_id, forfeit_one, forfeit_two, match_num, day):
+def create_match(east_id, east_win, west_id, west_win, technique_id, forfeit_one, forfeit_two, match_num, day, tournament_id):
   match_url = "https://rest-api-dot-fantasy-sumo-409406.uw.r.appspot.com/api/matches"
   match_body = {
     "wrestler1": east_id,
@@ -53,7 +53,7 @@ def create_match(east_id, east_win, west_id, west_win, technique_id, forfeit_one
     "winTechniqueId": technique_id,
     "matchNum": match_num,
     "day": day,
-    "tournament": "1faf296f-1e65-4572-8ad5-7d977c200cc5"
+    "tournament": tournament_id
   }
   
   res = requests.post(match_url, json=match_body)
@@ -71,7 +71,7 @@ def create_day(day_num, matches):
   return res.json()['id']
 
 
-def process_tr(tr, match_num, day_num):
+def process_tr(tr, match_num, day_num, tournament_id):
   west_won = False
   east_won = False
   td = tr.find_all("td")
@@ -95,13 +95,13 @@ def process_tr(tr, match_num, day_num):
     if technique == "fusen":
       forfeit_one = True
     print("%s beat %s using %s"% (east_wrestler, west_wrestler, technique.text))
-    match_id = create_match(east_wrestler_id, True, west_wrestler_id, False, technique_id, forfeit_one, forfeit_two, match_num, day_num)
+    match_id = create_match(east_wrestler_id, True, west_wrestler_id, False, technique_id, forfeit_one, forfeit_two, match_num, day_num, tournament_id)
     return match_id
   else:
     if technique == "fusen":
       forfeit_two = True
     print("%s beat %s using %s"% (west_wrestler, east_wrestler, technique.text))
-    match_id = create_match(east_wrestler_id, False, west_wrestler_id, True, technique_id, forfeit_one, forfeit_two, match_num, day_num)
+    match_id = create_match(east_wrestler_id, False, west_wrestler_id, True, technique_id, forfeit_one, forfeit_two, match_num, day_num, tournament_id)
     return match_id
 
 tournament_start_date = "2024-01-14"
@@ -131,6 +131,8 @@ tournament_url = "http://sumodb.sumogames.de/Results.aspx?b=<QUERY>&d=<DAY>"
 days = []
 s = requests.Session()
 matches = []
+if days_to_process > 15:
+  days_to_process = 15
 print(days_to_process)
 for i in range(day, days_to_process + 1):
   print(i)
@@ -148,7 +150,7 @@ for i in range(day, days_to_process + 1):
   soup = BeautifulSoup(page.content, 'html.parser')
   tables = soup.find_all(class_="tk_table")[0].find_all("tr")
   for x in range(1, len(tables)):
-    match_id = process_tr(tables[x], len(matches) + 1, i)
+    match_id = process_tr(tables[x], len(matches) + 1, i, tournament_id)
     matches.append({"id": match_id})
 
 tournament_update = {
