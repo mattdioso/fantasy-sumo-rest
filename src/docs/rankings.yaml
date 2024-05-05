@@ -1,0 +1,29 @@
+components:
+  schemas:
+    ranking:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 1a5a1826-652d-4422-9d65-38d2f6bd290f
+        rank:
+          type: string
+          example: Y
+        idTournament:
+          type: string
+          format: uuid
+          example: 1faf296f-1e65-4572-8ad5-7d977c200cc5
+        wins:
+          type: number
+          example: 0
+        losses:
+          type: number
+          example: 0
+        division:
+          type: string
+          example: west
+        idWrestler:
+          type: string
+          format: uuid
+          example: 494b1e1f-5dd5-4eef-92c9-a08deb20de38

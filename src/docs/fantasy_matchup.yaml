@@ -1,0 +1,37 @@
+components:
+  schemas:
+    fantasy_matchup:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: e5a4f4d1-192e-4ee2-ab7c-450fd8de17e4
+        fantasy_tournament:
+          type: object
+          $ref: '#/components/schemas/fantasy_tournament'
+        day1:
+          type: number
+          example: 13
+        day2:
+          type: number
+          example: 14
+        day3:
+          type: number
+          example: 15
+        team1:
+          type: object
+          $ref: '#/components/schemas/team'
+        team2:
+          type: object
+          $ref: '#/components/schemas/team'
+        team1_score:
+          type: number
+          example: 0
+        team2_score:
+          type: number
+          example: 0
+        matches:
+          type: array
+          items:
+            $ref: '#/components/schemas/matches'

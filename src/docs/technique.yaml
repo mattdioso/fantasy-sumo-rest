@@ -1,0 +1,15 @@
+components:
+  schemas:
+    technique:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: c43904cd-152f-4012-b8e4-10ddd67c059a
+        techniquetype:
+          type: string
+          example: Abisetaoshi
+        techniquedescr:
+          type: string
+          example: Forcing down the opponent on their back by leaning forward while in a grappling position (backward force down).

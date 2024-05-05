@@ -1,0 +1,28 @@
+components:
+  schemas:
+    team:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d0940a66-fdb7-43f6-a167-960b8103b8c7
+        teamname:
+          type: string
+          example: mattdioso
+        user:
+          type: object
+          $ref: '#/components/schemas/user'
+        wrestlers:
+          type: array
+          items:
+            $ref: '#/components/schemas/wrestler'
+        wins:
+          type: number
+          example: 4
+        losses:
+          type: number
+          example: 1
+        total_points:
+          type: number
+          example: 47.5

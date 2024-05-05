@@ -1,0 +1,64 @@
+paths:
+  /wrestlers:                # path of the user from your endpoint
+    get:                 # endpoint request type (post request)
+      tags:               # Tag property
+        - Wrestler            # Value of the tag
+      summary: gets list of wrestlers
+      produces:
+      - application/json
+      responses:          # server responses
+        200:
+          description: An object with wrestler details
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/wrestler"
+
+components:
+  schemas:
+    wrestler:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 494b1e1f-5dd5-4eef-92c9-a08deb20de38
+        ringname:
+          type: string
+          example: Terunofuji
+        familyname:
+          type: string
+          example: Suginomori
+        givenname:
+          type: string
+          example: Seizan
+        birthdate:
+          type: string
+          format: date
+          example: 1991-11-29
+        birthplace:
+          type: string
+          example: Mongolia
+        height:
+          type: integer
+          example: 192
+        weight:
+          type: integer
+          example: 184
+        idstable:
+          type: string
+          format: uuid
+          example: 494b1e1f-5dd5-4eef-92c9-a08deb20de38
+        retired:
+          type: boolean
+          example: true
+        avatar_store:
+          type: string
+          format: uri
+          example: https://storage.googleapis.com/fantasy-sumo-409406.appspot.com/sumo_avatars/Terunofuji.jpg
+        icon_store:
+          type: string
+          format: uri
+          example: https://storage.googleapis.com/fantasy-sumo-409406.appspot.com/sumo_avatars/Terunofuji_icon.jpg

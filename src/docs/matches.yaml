@@ -1,0 +1,40 @@
+components:
+  schema:
+    matches:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 01815bdc-10f8-4509-b736-2b79b8793038
+        wrestler1:
+          type: object
+          $ref: '#/components/schemas/wrestler'
+        win1:
+          type: boolean
+          example: true
+        winByForfeit1:
+          type: boolean
+          example: false
+        wrestler2:
+          type: object
+          $ref: '#/components/schemas/wrestler'
+        win2:
+          type: boolean
+          example: false
+        winByForfeit2:
+          type: boolean
+          example: false
+        winTechniqueId:
+          type: string
+          format: uuid
+          example: b85142f1-3917-4ae1-a193-5f660f916b0f
+        matchNum:
+          type: number
+          example: 292
+        day:
+          type: number
+          example: 15
+        match_score:
+          type: object
+          $ref: '#/components/schemas/match_scores'

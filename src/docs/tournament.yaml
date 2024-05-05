@@ -1,0 +1,37 @@
+components:
+  schema:
+    tournament:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: eef17dc9-f019-435d-84e3-759549f6ab6a
+        name:
+          type: string
+          example: January Tournament
+        month_year:
+          type: string
+          format: date
+          example: 01-2024
+        datestart:
+          type: string
+          format: date
+          example: 2024-01-14
+        dateend:
+          type: string
+          format: date
+          example: 2024-01-28
+        cancelled:
+          type: boolean
+          example: 1
+        location:
+          type: string
+          example: Tokyo
+        banzuke_id:
+          type: string
+          example: 1
+        matches:
+          type: array
+          items:
+            $ref: '#/components/schemas/matches'

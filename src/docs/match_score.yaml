@@ -1,0 +1,15 @@
+components:
+  schemas:
+    match_score:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: a5abac68-bc05-4be9-9a16-3a90402c1db0
+        day:
+          type: number
+          example: 15
+        score:
+          type: number
+          example: 1

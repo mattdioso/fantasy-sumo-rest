@@ -1,0 +1,18 @@
+components:
+  schemas:
+    fantasy_tournament:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 26ab9b5a-d45d-4fa2-8373-933475fdf92f
+        name:
+          type: string
+          example: November Basho
+        teams:
+          type: object
+          $ref: '#/components/schemas/team'
+        winner:
+          type: object
+          $ref: '#/components/schemas/user'

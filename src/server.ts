@@ -13,7 +13,8 @@ import { UserController } from './controller/user.controller';
 import { TeamController } from './controller/team.controller';
 import { FantasyTournamentController } from './controller/fantasy_tournament.controller';
 import { FantasyMatchupController } from './controller/fantasy_matchup.controller';
-
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
 
 class Server {
     private app: express.Application;
@@ -67,6 +68,27 @@ class Server {
         this.app.get('/', (req: Request, res: Response) => {
             res.send("Hello world!");
         });
+
+        const swaggerDefinition = {
+            openapi: '3.0.1',
+            info: {
+              title: 'REST API for my Fantasy Sumo', // Title of the documentation
+              version: '1.0.0', // Version of the app
+              description: 'This is the REST API for the Fantasy Sumo application', // short description of the app
+            },
+            servers: [
+                {
+                    url: 'http://localhost:8080/api',
+                    description: 'Local Dev server'
+                }
+            ]
+          };
+        const options = {
+            swaggerDefinition,
+            apis: ['./build/docs/**/*.yaml']
+        }
+        const swaggerSpec = swaggerJSDoc(options);
+        this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
     }
 
     public start() {

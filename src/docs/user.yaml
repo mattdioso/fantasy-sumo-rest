@@ -1,0 +1,26 @@
+components:
+  schemas:
+    user:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 8751360b-338e-463b-a067-4d118ae270a8
+        username:
+          type: string
+          example: mattdioso
+        firstname:
+          type: string
+          example: Matt
+        lastname:
+          type: string
+          example: Dioso
+        email:
+          type: string
+          format: email
+          example: dioso.matt@gmail.com
+        avatar_store:
+          type: string
+          format: uri
+          example: https://storage.googleapis.com/fantasy-sumo-409406.appspot.com/user_pics/Dioso.jpg
