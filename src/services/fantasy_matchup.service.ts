@@ -1,7 +1,7 @@
 import { getConnection } from "typeorm";
 import { FantasyMatchupEntity } from "../database/entities/fantasy_matchup.entity";
 import { FantasyMatchupRepository } from "../repository/fantasy_matchup.repository";
-import dataSource from "../database/ormconfig";
+import dataSource from '@database/ormconfig';
 import { UserRepository } from "../repository/user.repository";
 import { UserEntity } from "../database/entities/user.entity";
 import { TeamRepository } from "../repository/team.repository";
