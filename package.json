@@ -21,6 +21,7 @@
     "typescript": "^4.5.3"
   },
   "dependencies": {
+    "@actions/core": "^1.11.1",
     "class-transformer": "^0.5.1",
     "copyfiles": "^2.4.1",
     "cors": "^2.8.5",
