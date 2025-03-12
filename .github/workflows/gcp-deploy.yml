@@ -23,12 +23,12 @@ jobs:
       - name: Create ormconfig
         run: |
           touch ormconfig.json
-          echo ${{ secrets.GCP_ORMCONFIG }} | base64 --decode >> ormconfig.json
+          echo "${{ secrets.GCP_ORMCONFIG }}" | base64 --decode >> ormconfig.json
 
       - name: Create env file
         run: |
           touch .env
-          echo ${{ secrets.GCP_ENV }} | base64 --decode >> .env
+          echo "${{ secrets.GCP_ENV }}" | base64 --decode >> .env
 
       - name: Install dependencies
         run: npm install
