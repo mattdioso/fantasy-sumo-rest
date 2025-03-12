@@ -19,6 +19,16 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '18'
+      
+      - name: Create ormconfig
+        run: |
+          touch ormconfig.json
+          echo ${{ secrets.GCP_ORMCONFIG }} >> ormconfig.json
+
+      - name: Create env file
+        run: |
+          touch .env
+          echo ${{ secrets.GCP_ENV }} >> .env
 
       - name: Install dependencies
         run: npm install
