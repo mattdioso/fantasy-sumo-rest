@@ -19,6 +19,11 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '18'
+
+      - name: create ormconfig.ts
+        run: |
+          touch src/database/ormconfig.ts
+          echo "${{ secrets.GCP_ORMCONFIG_TS }}" | base64 --decode >> src/database/ormconfig.ts
       
       - name: Create ormconfig
         run: |
@@ -34,7 +39,7 @@ jobs:
         run: npm install
 
       - name: Build Node Project
-        run: tsc
+        run: npm run tsc
 
       - name: Google Cloud Auth
         uses: 'google-github-actions/auth@v2'
