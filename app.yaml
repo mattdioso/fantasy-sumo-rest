@@ -1,6 +1,6 @@
 runtime: nodejs20
 instance_class: F4
 env: standard
-service: rest-api
+service: fantasy-sumo-rest-api
 resources:
   memory_gb: 4

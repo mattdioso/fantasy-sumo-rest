@@ -41,6 +41,7 @@ class Server {
         this.app.use(express.json());
         var cors = require('cors');
         this.app.use(cors());
+        this.app.options('*', cors());
     }
 
     public async routes() {
@@ -66,7 +67,7 @@ class Server {
         this.app.use('/api/fantasy_tournaments', this.fantasyTournamentController.router);
         this.app.use('/api/fantasy_matchups', this.fantasyMatchupController.router);
         this.app.get('/', (req: Request, res: Response) => {
-            res.send("Hello world!");
+            res.send("Hello world! - from Github Actions");
         });
 
         const swaggerDefinition = {
