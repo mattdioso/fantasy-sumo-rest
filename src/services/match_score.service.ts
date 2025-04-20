@@ -42,16 +42,16 @@ export class MatchScoreService {
         this.ranking_repository = dataSource.getRepository(RankingsEntity);
     }
 
-    public index = async() => {
+    public index = async () => {
         const match_scores = await this.match_score_repository.find();
         return match_scores;
     }
 
     public get_tournament_match_scores = async (tournament_id: string) => {
         let res = await getConnection("default").createQueryBuilder()
-                .relation(TournamentEntity, "tourament")
-                .of(tournament_id)
-                .loadMany();
+            .relation(TournamentEntity, "tourament")
+            .of(tournament_id)
+            .loadMany();
         return res;
     }
 
@@ -64,24 +64,24 @@ export class MatchScoreService {
         return res;
     }
 
-    public get_match_score = async(match_id: string) => {
-        
+    public get_match_score = async (match_id: string) => {
+
         let match = await this.match_repository.findOne({
             where: {
                 id: match_id
             }
         });
         let res = await this.match_score_repository.createQueryBuilder('match_scores')
-                        .leftJoinAndSelect('match_scores.match', 'match')
-                        .where("match_scores.match.id = :matchId ", {matchId: match_id} )
-                        .getOne();
-        
+            .leftJoinAndSelect('match_scores.match', 'match')
+            .where("match_scores.match.id = :matchId ", { matchId: match_id })
+            .getOne();
+
         return res;
     }
 
-    public create_match_score = async(match_id: string) => {
+    public create_match_score = async (match_id: string) => {
         let match = await this.match_repository.findOne({
-            where : {
+            where: {
                 id: match_id
             }
         }) as MatchEntity;
@@ -91,14 +91,14 @@ export class MatchScoreService {
         //                 .loadOne();
         let day = match.day;
         let tournament = await this.tournament_repository.createQueryBuilder()
-                            .relation(MatchEntity, "tournament")
-                            .of(match)
-                            .loadOne();
+            .relation(MatchEntity, "tournament")
+            .of(match)
+            .loadOne();
         let winning_wrestler = match.wrestler1;
         let winning_technique = match.winTechniqueId;
         if (match.win2 === true) {
             winning_wrestler = match.wrestler2;
-        } 
+        }
         let score = await this.calculate_score(match.wrestler1, match.wrestler2, match.win1, match.win2, winning_technique);
         let match_score = await this.match_score_repository.create();
         match_score.day = day;
@@ -117,7 +117,7 @@ export class MatchScoreService {
         return match_score;
     }
 
-    public recalculate_match_score = async(match_id: string) => {
+    public recalculate_match_score = async (match_id: string) => {
         let match = await this.match_repository.findOne({
             where: {
                 id: match_id
@@ -146,24 +146,24 @@ export class MatchScoreService {
             update = true;
             match_score.score = new_score;
         }
-        
+
         if (update) {
-           await this.match_score_repository.update(match_score.id, {score: new_score}).then(() => {
+            await this.match_score_repository.update(match_score.id, { score: new_score }).then(() => {
                 console.log("successful update");
             }).catch(err => {
                 console.log(err)
             })
         }
-        
+
         return match;
     }
 
-    private calculate_score = async(wrestler1: WrestlerEntity, wrestler2: WrestlerEntity, win1: boolean, win2: boolean, winTechniqueId: string) => {
-        let rank1 = await this.ranking_repository.findOne( {where: { idWrestler: wrestler1.id }}) as RankingsEntity;
-        let rank2 = await this.ranking_repository.findOne({where: { idWrestler: wrestler2.id }}) as RankingsEntity;
-        console.log("RANK 1: " + rank1.rank + " RANK 2: " + rank2.rank);
-        let i1 = Rank.indexOf(rank1.rank);
-        let i2 = Rank.indexOf(rank2.rank);
+    private calculate_score = async (wrestler1: WrestlerEntity, wrestler2: WrestlerEntity, win1: boolean, win2: boolean, winTechniqueId: string) => {
+        let rank1 = await this.ranking_repository.findOne({ where: { idWrestler: wrestler1.id } }) as RankingsEntity;
+        let rank2 = await this.ranking_repository.findOne({ where: { idWrestler: wrestler2.id } }) as RankingsEntity;
+        console.log("RANK 1: " + rank1?.rank + " RANK 2: " + rank2?.rank);
+        let i1 = Rank.indexOf(rank1?.rank);
+        let i2 = Rank.indexOf(rank2?.rank);
         console.log("RANK 1: " + i1 + " RANK 2: " + i2);
         let score = 0;
         let tech = await this.technique_repository.findOne({
@@ -172,7 +172,7 @@ export class MatchScoreService {
             }
         });
         //0 means they won; i should change this to boolean
-        if(win1 === true) {
+        if (win1 === true) {
             let diff = i1 - i2;
             if (diff > 0) {
                 score = 1 + (diff / 10);

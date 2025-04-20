@@ -12,7 +12,7 @@ export class MatchEntity {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
-    
+
     @ManyToOne(() => WrestlerEntity, {
         eager: true
     })
@@ -25,13 +25,13 @@ export class MatchEntity {
     @Column()
     winByForfeit1: boolean;
 
-    
+
     @ManyToOne(() => WrestlerEntity, {
         eager: true
     })
     @JoinColumn()
     wrestler2: WrestlerEntity;
-    
+
     @Column()
     win2: boolean;
 

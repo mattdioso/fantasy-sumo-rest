@@ -25,12 +25,12 @@ def create_ranking(rank, wins, losses, division, wrestler):
     "division": division,
     "idWrestler": wrestler_id
   }
-  rank_url = "https://fantasy-sumo-409406.uw.r.appspot.com/api/rankings"
+  rank_url = "https://fantasy-sumo-rest-api-dot-fantasy-sumo-409406.uw.r.appspot.com/api/rankings"
   res = requests.post(rank_url, json=rank_payload)
   print(res.json())
 
 def find_wrestler_id(wrestler):
-  search_url="https://fantasy-sumo-409406.uw.r.appspot.com/api/wrestlers/search"
+  search_url="https://fantasy-sumo-rest-api-dot-fantasy-sumo-409406.uw.r.appspot.com/api/wrestlers/search"
   json_body = {
     "ringname": wrestler
   }
@@ -41,6 +41,7 @@ def find_wrestler_id(wrestler):
       if wrestler_json['ringname'] == wrestler:
           wrestler_id = wrestler_json['id']
   return wrestler_id
+
 
 banzuke_url = "http://sumodb.sumogames.de/Banzuke.aspx?b=202401&heya=-1&shusshin=-1"
 page = requests.get(banzuke_url)

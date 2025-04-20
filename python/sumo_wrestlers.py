@@ -96,7 +96,7 @@ def scrape_sumo_info(uri, name):
     "icon_store": "https://storage.googleapis.com/fantasy-sumo-409406.appspot.com/sumo_icons/<ringname>_icon.jpg".replace("<ringname>", name)
   }
 
-  response = requests.post('https://fantasy-sumo-409406.uw.r.appspot.com/api/wrestlers', json=post_data)
+  response = requests.post('https://fantasy-sumo-rest-api-dot-fantasy-sumo-409406.uw.r.appspot.com/api/wrestlers', json=post_data)
   print(response.text)
   if not "exists" in response.text and img_uri != "":
     upload_avatar(img_uri, name)
@@ -136,7 +136,7 @@ soup = BeautifulSoup(page.content, 'html.parser')
 count_p = 1
 global_p = 10
 num_sumo_wrestlers = 0
-for i in range(6, 7):
+for i in range(0, 7):
     print("kakuzuke_id: " + str(i))
     count_p = 1
     while count_p <= global_p:
