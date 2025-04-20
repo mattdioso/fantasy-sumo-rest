@@ -124,7 +124,9 @@ export class MatchScoreService {
             }
         });
         let match_score = match!.match_score;
-        let original_score = match_score.score ?? 0;
+        if (!match_score)
+            match_score = await this.create_match_score(match_id)
+        let original_score = match_score?.score ?? 0;
         let wrestler1 = match!.wrestler1;
         let wrestler2 = match!.wrestler2;
         let win1 = match!.win1;
