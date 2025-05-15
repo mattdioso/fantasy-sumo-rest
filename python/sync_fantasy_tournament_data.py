@@ -53,7 +53,9 @@ def create_fantasy_tournament(basho_id, tournament_name):
     return f_id
 
 def apply_winner(basho_id, u_id):
+    print(basho_id, u_id)
     fantasy_tournament_url = BASE_URL + "/api/fantasy_tournaments/" + basho_id
+
     payload = {
         'winner': u_id
     }
@@ -78,8 +80,8 @@ def sync_fantasy_tournament_data():
         #print(winner + "\t" + get_user_id(winner))
         u_id = get_user_id(winner)
         f_id = create_fantasy_tournament(t_id, fantasy_tournament_name)
-        apply_winner(t_id, u_id)
-        print(f_id)
+        w_res = apply_winner(f_id, u_id)
+        print(w_res)
 
         
     return

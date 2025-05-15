@@ -81,7 +81,9 @@ export class FantasyTournamentService {
     }
 
     public update = async (fantasy: FantasyTournamentEntity, id: string) => {
-        await this.fantasy_tournament_repository.update(id, fantasy)
+        await this.fantasy_tournament_repository.update(id, fantasy).catch((error) => {
+            console.error(error)
+        })
         return await this.fantasy_tournament_repository.findOne({
             where: {
                 id: id
