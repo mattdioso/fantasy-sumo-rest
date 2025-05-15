@@ -28,13 +28,15 @@ export class FantasyTournamentEntity {
 
     @OneToMany(() => TeamEntity, (team: TeamEntity) => team.fantasy_tournament, {
         onDelete: "CASCADE",
-        cascade:true,
+        cascade: true,
         eager: true
     })
-    @JoinColumn({name: "id"})
+    @JoinColumn({ name: "id" })
     teams: TeamEntity[];
 
-    @OneToOne(() => UserEntity)
+    @OneToOne(() => UserEntity, {
+        eager: true
+    })
     @JoinColumn()
     winner: UserEntity;
 }

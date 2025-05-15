@@ -14,6 +14,7 @@ retries = Retry(total=3, backoff_factor=1, status_forcelist=[502, 503, 504])
 s.mount('http://', HTTPAdapter(max_retries=retries))
 tournament_data = {}
 fantasy_tournament_data = {}
+user_data = {}
 
 def get_all_tournaments():
     tournament_url = BASE_URL + "/api/tournaments"
@@ -27,10 +28,14 @@ def get_all_fantasy_tournaments():
     global fantasy_tournament_data
     fantasy_tournament_data = res.json()
 
-def get_user_id(username):
+def get_all_users():
     user_url = BASE_URL + "/api/users"
-    res = s.get(user_url).json()
-    return [u for u in res if u['username'] == username][0]['id']
+    res = s.get(user_url)
+    global user_data
+    user_data = res.json()
+
+def get_user_id(username):
+    return [u for u in user_data if u['username'] == username][0]['id']
 
 def check_if_fantasy_tournament_exists(tournament_name):
     return [f for f in fantasy_tournament_data if f['name'] == tournament_name][0]['id']
@@ -46,6 +51,14 @@ def create_fantasy_tournament(basho_id, tournament_name):
         res = s.post(fantasy_tournament_url, json=payload)
         f_id = res.json()['id']
     return f_id
+
+def apply_winner(basho_id, u_id):
+    fantasy_tournament_url = BASE_URL + "/api/fantasy_tournaments/" + basho_id
+    payload = {
+        'winner': u_id
+    }
+    res = s.put(fantasy_tournament_url, json=payload)
+    return res.json()
 
 def sync_fantasy_tournament_data():
     try:
@@ -63,7 +76,9 @@ def sync_fantasy_tournament_data():
         tournament = data[tournament_date]
         winner = tournament['winner']
         #print(winner + "\t" + get_user_id(winner))
+        u_id = get_user_id(winner)
         f_id = create_fantasy_tournament(t_id, fantasy_tournament_name)
+        apply_winner(t_id, u_id)
         print(f_id)
 
         
@@ -72,4 +87,5 @@ def sync_fantasy_tournament_data():
 if __name__ == "__main__":
     get_all_tournaments()
     get_all_fantasy_tournaments()
+    get_all_users()
     sync_fantasy_tournament_data()
