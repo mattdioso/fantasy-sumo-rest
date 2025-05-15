@@ -20,12 +20,12 @@ export class FantasyTournamentService {
         this.tournament_repository = dataSource.getRepository(TournamentEntity);
     }
 
-    public index = async() => {
+    public index = async () => {
         const fantasy_tournaments = await this.fantasy_tournament_repository.find();
         return fantasy_tournaments;
     }
 
-    public get_fantasy_tournament = async(id: string) => {
+    public get_fantasy_tournament = async (id: string) => {
         let fantasy = await this.fantasy_tournament_repository.findOne({
             where: {
                 id: id
@@ -34,7 +34,7 @@ export class FantasyTournamentService {
         return fantasy;
     }
 
-    public get_fantasy_tournament_teams = async(id: string) => {
+    public get_fantasy_tournament_teams = async (id: string) => {
         let fantasy_tournament = await this.fantasy_tournament_repository.findOne({
             where: {
                 id: id
@@ -43,11 +43,11 @@ export class FantasyTournamentService {
         let res = this.fantasy_tournament_repository.createQueryBuilder()
             .relation(TeamEntity, "fantasy_tournament")
             .of(fantasy_tournament).loadMany();
-            
+
         return res;
     }
 
-    public get_fantasy_tournament_matches = async(id: string) => {
+    public get_fantasy_tournament_matches = async (id: string) => {
         let fantasy_tournament = await this.fantasy_tournament_repository.findOne({
             where: {
                 id: id
@@ -60,7 +60,7 @@ export class FantasyTournamentService {
         return res;
     }
 
-    public get_fantasy_tournament_tournament = async(id: string) => {
+    public get_fantasy_tournament_tournament = async (id: string) => {
         let fantasy_tournament = await this.fantasy_tournament_repository.findOne({
             where: {
                 id: id
@@ -68,19 +68,20 @@ export class FantasyTournamentService {
         });
 
         let res = dataSource.createQueryBuilder().relation(FantasyTournamentEntity, "tournament")
-        .of(fantasy_tournament)
-        .loadOne();
+            .of(fantasy_tournament)
+            .loadOne();
 
         return res;
     }
 
-    public create = async(fantasy: FantasyTournamentEntity) => {
+    public create = async (fantasy: FantasyTournamentEntity) => {
         const new_fantasy = await this.fantasy_tournament_repository.create(fantasy);
         await this.fantasy_tournament_repository.save(new_fantasy);
         return new_fantasy;
     }
 
     public update = async (fantasy: FantasyTournamentEntity, id: string) => {
+        await this.fantasy_tournament_repository.update(id, fantasy)
         return await this.fantasy_tournament_repository.findOne({
             where: {
                 id: id
@@ -88,7 +89,7 @@ export class FantasyTournamentService {
         });
     }
 
-    public delete = async(id: string) => {
+    public delete = async (id: string) => {
         return await this.fantasy_tournament_repository.delete(id);
     }
 }

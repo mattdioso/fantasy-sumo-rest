@@ -21,3 +21,12 @@ then run the generated migration file (you might need to place the generated .js
 
 To deploy to GCP cloud (any changes need to re-compiled first):
     `gcloud app deploy`
+
+TODO (5/12/2025):
+    - Create fantasy tournament objects of past tournaments
+    - might need to refactor update_fantasy_tournament service
+  - Create fantasy_tournament object
+    - create teams, collect IDs
+    - grab winner user ID
+    - create FantasyMatchupEntities
+    - set tournamentID 
