@@ -34,7 +34,7 @@ export class FantasyTournamentEntity {
     @JoinColumn({ name: "id" })
     teams: TeamEntity[];
 
-    @OneToOne(() => UserEntity, {
+    @ManyToOne(() => UserEntity, {
         eager: true
     })
     @JoinColumn()

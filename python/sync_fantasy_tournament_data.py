@@ -8,7 +8,8 @@ import calendar
 import uuid
 from requests.adapters import HTTPAdapter, Retry
 
-BASE_URL = "https://fantasy-sumo-rest-api-dot-fantasy-sumo-409406.uw.r.appspot.com"
+#BASE_URL = "https://fantasy-sumo-rest-api-dot-fantasy-sumo-409406.uw.r.appspot.com"
+BASE_URL = "http://localhost:8080"
 s = requests.Session()
 retries = Retry(total=3, backoff_factor=1, status_forcelist=[502, 503, 504])
 s.mount('http://', HTTPAdapter(max_retries=retries))
@@ -53,14 +54,16 @@ def create_fantasy_tournament(basho_id, tournament_name):
     return f_id
 
 def apply_winner(basho_id, u_id):
-    print(basho_id, u_id)
     fantasy_tournament_url = BASE_URL + "/api/fantasy_tournaments/" + basho_id
-
-    payload = {
-        'winner': u_id
-    }
-    res = s.put(fantasy_tournament_url, json=payload)
-    return res.json()
+    res = s.get(fantasy_tournament_url)
+    w_j = res.json()
+    if w_j['winner'] is None:
+        payload = {
+            'winner': u_id
+        }
+        res = s.put(fantasy_tournament_url, json=payload)
+        return res.json()
+    return w_j['winner']['id']
 
 def sync_fantasy_tournament_data():
     try:
@@ -80,6 +83,7 @@ def sync_fantasy_tournament_data():
         #print(winner + "\t" + get_user_id(winner))
         u_id = get_user_id(winner)
         f_id = create_fantasy_tournament(t_id, fantasy_tournament_name)
+        print(f_id, u_id)
         w_res = apply_winner(f_id, u_id)
         print(w_res)
 
