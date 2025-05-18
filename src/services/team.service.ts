@@ -1,4 +1,4 @@
-import { getConnection } from "typeorm";
+import { FindOptionsWhere, getConnection } from "typeorm";
 import { TeamEntity } from "../database/entities/team.entity";
 import { TournamentEntity } from "../database/entities/tournament.entity";
 import { UserEntity } from "../database/entities/user.entity";
@@ -32,12 +32,12 @@ export class TeamService {
         this.fantasy_tournament_repository = dataSource.getRepository(FantasyTournamentEntity);
     }
 
-    public index = async() => {
-        const teams = await this.team_repository.find().catch(err => {console.log(err)});
+    public index = async () => {
+        const teams = await this.team_repository.find().catch(err => { console.log(err) });
         return teams;
     }
 
-    public get_team = async(id: string) => {
+    public get_team = async (id: string) => {
         let team = await this.team_repository.findOne({
             where: {
                 id: id
@@ -46,25 +46,25 @@ export class TeamService {
         return team;
     }
 
-    public get_team_wrestlers = async(id: string) => {
+    public get_team_wrestlers = async (id: string) => {
         let team = await this.team_repository.findOne({
             where: {
                 id: id
             }
         });
-        let res =  await getConnection("default").createQueryBuilder()
-                .relation(TeamEntity, "wrestlers")
-                .of(team)
-                .loadMany();
+        let res = await getConnection("default").createQueryBuilder()
+            .relation(TeamEntity, "wrestlers")
+            .of(team)
+            .loadMany();
         return res;
     }
 
     public create = async (team: TeamEntity) => {
         const new_team = await this.team_repository.create(team);
-        let wrestlers = team.wrestlers;
+        let wrestlers: WrestlerEntity[] = [];
         let user = await this.user_repository.findOne({
             where: {
-                id: team.user.id
+                username: team.teamname
             }
         });
         team.user = user!;
@@ -76,58 +76,39 @@ export class TeamService {
             });
             team.fantasy_tournament = tournament!;
         }
-        // if (team.wrestlers) {
-        //    for (let i = 0; i < wrestlers.length; i++) {
-        //         let wrestler_id = wrestlers[i] as WrestlerEntity;
-        //         let wrestler = await this.wrestler_repository.findOne({
-        //             where: {
-        //                 id: wrestler_id.id
-        //             }
-        //         });
-                
-        //         team.wrestlers[i] = wrestler!;
-        //     }
-        //     team.wrestlers = wrestlers;
-        // }
-        if (team.wrestlers) {
-            for (let i = 0; i < team.wrestlers.length; i++) {
-                let wrestler_id = team.wrestlers[i].id;
-//                console.log(typeof wrestler_id);
-                let wrestler = await this.wrestler_repository.findOne({
-                    where: {
-                        id: wrestler_id
-                    }
-                })
-                team.wrestlers[i] = wrestler!;
-            }
-
+        for (const wrestler_id of team.wrestlers) {
+            const wrestler = await this.wrestler_repository.findOne({
+                where: [{
+                    id: wrestler_id
+                } as unknown as FindOptionsWhere<WrestlerEntity>]
+            })
+            wrestlers.push(wrestler!)
         }
-        console.log(team.wrestlers);
         new_team.user = user!;
-        new_team.wrestlers = team.wrestlers;
+        new_team.wrestlers = wrestlers;
         await this.team_repository.save(new_team);
         return new_team;
     }
 
-    public update = async(team: TeamEntity, id: string) => {
+    public update = async (team: TeamEntity, id: string) => {
         if (team.user) {
             let user_id = team.user;
             console.log(user_id)
             // let user = await this.user_repository.findOne(user_id);
             // updated!.user = user!;
             await this.team_repository.createQueryBuilder()
-            .relation(TeamEntity, "user")
-            .of(id)
-            .set(user_id).catch(err => {console.log(err)});
+                .relation(TeamEntity, "user")
+                .of(id)
+                .set(user_id).catch(err => { console.log(err) });
         }
         console.log("added user");
         if (team.fantasy_tournament) {
             // let tournament = await this.tournament_repository.findOne(team.tournament);
             // updated!.tournament = tournament!;
             await this.team_repository.createQueryBuilder()
-            .relation(TeamEntity, "tournament")
-            .of(id)
-            .set(team.fantasy_tournament).catch(err => {console.log(err)});
+                .relation(TeamEntity, "tournament")
+                .of(id)
+                .set(team.fantasy_tournament).catch(err => { console.log(err) });
         }
         console.log("added tournament");
         // await this.team_repository.update(id, updated!).catch(err => {console.log(err)});
@@ -140,11 +121,11 @@ export class TeamService {
             });
             team_to_update!.wrestlers = [];
             await this.team_repository.save(team_to_update!);
-            for (let i = 0; i< team.wrestlers.length; i++) {
+            for (let i = 0; i < team.wrestlers.length; i++) {
                 await getConnection("default").createQueryBuilder()
-                .relation(TeamEntity, "wrestlers")
-                .of(id)
-                .add(team.wrestlers[i]).catch(err => {console.log(err)});
+                    .relation(TeamEntity, "wrestlers")
+                    .of(id)
+                    .add(team.wrestlers[i]).catch(err => { console.log(err) });
             }
         }
         console.log("added wrestlers");
@@ -163,7 +144,7 @@ export class TeamService {
     }
 
     public delete = async (id: string) => {
-        let deleted_team = await this.team_repository.delete(id).catch(err => {console.log(err)});
+        let deleted_team = await this.team_repository.delete(id).catch(err => { console.log(err) });
         return deleted_team;
     }
 }

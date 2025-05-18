@@ -21,19 +21,19 @@ export class TeamEntity {
 
     @ManyToOne(() => FantasyTournamentEntity, (fantasy_tournament: FantasyTournamentEntity) => fantasy_tournament.teams)
     fantasy_tournament: FantasyTournamentEntity;
-    
+
     @ManyToMany(() => WrestlerEntity, {
         eager: true
     })
     @JoinTable()
     wrestlers: WrestlerEntity[];
 
-    @Column({type: 'int', default: 0, nullable: true})
+    @Column({ type: 'int', default: 0, nullable: true })
     wins: number;
 
-    @Column({type: 'int', default: 0, nullable: true})
+    @Column({ type: 'int', default: 0, nullable: true })
     losses: number;
 
-    @Column({type: 'float', default: 0, nullable: true})
+    @Column({ type: 'float', default: 0, nullable: true })
     total_points: number;
 }

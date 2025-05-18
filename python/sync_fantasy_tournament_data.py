@@ -16,6 +16,13 @@ s.mount('http://', HTTPAdapter(max_retries=retries))
 tournament_data = {}
 fantasy_tournament_data = {}
 user_data = {}
+wrestler_data = {}
+
+def get_all_wrestlers():
+    wrestler_url = BASE_URL + "/api/wrestlers"
+    res = s.get(wrestler_url)
+    global wrestler_data
+    wrestler_data = res.json()
 
 def get_all_tournaments():
     tournament_url = BASE_URL + "/api/tournaments"
@@ -65,6 +72,36 @@ def apply_winner(basho_id, u_id):
         return res.json()
     return w_j['winner']['id']
 
+def create_team(team_data, f_id):
+    fantasy_tournament_url = BASE_URL + "/api/fantasy_tournaments/" + f_id
+    team_url = BASE_URL + "/api/teams"
+    f_res = s.get(fantasy_tournament_url)
+    f_teams = f_res.json()['teams']
+    f_t_exists = any(t['teamname'] == team_data['teamname'] for t in f_teams)
+    if not f_t_exists:
+        wrestler_ids = []
+        for wrestler in team_data['wrestlers']:
+            w_id = [w for w in wrestler_data if w['ringname'] == wrestler][0]['id']
+            print(wrestler + "\t" + w_id)
+            wrestler_ids.append(w_id)
+        team_data['wrestlers'] = wrestler_ids
+        team_data['fantasy_tournament'] = f_id
+        u_id = get_user_id(team_data['teamname'])
+        team_data['user'] = u_id
+        res = s.post(team_url, json=team_data)
+        print(json.dumps(team_data))
+        return res.json()['id']
+    return [t for t in f_teams if t['teamname'] == team_data['teamname']][0]['id']
+            
+
+    
+
+def create_matchup(matchup_data, f_id):
+    fantasy_tournament_url = BASE_URL + "/api/fantasy_tournaments/" + f_id
+    return
+    # get the teams
+
+
 def sync_fantasy_tournament_data():
     try:
         with open('data/fantasy_tournaments.json', 'r') as file:
@@ -83,9 +120,17 @@ def sync_fantasy_tournament_data():
         #print(winner + "\t" + get_user_id(winner))
         u_id = get_user_id(winner)
         f_id = create_fantasy_tournament(t_id, fantasy_tournament_name)
-        print(f_id, u_id)
-        w_res = apply_winner(f_id, u_id)
-        print(w_res)
+        apply_winner(f_id, u_id)
+        # create the teams
+        fantasy_tournament = s.get(BASE_URL + "/api/fantasy_tournaments/" + f_id)
+        if len(fantasy_tournament.json()['teams']) == 0:
+            print("creating teams")
+            team_data = tournament['teams']
+            teams = []
+            for t in team_data:
+                t_id = create_team(t, f_id)
+                print("created team: " + t_id)
+                teams.append(t_id)
 
         
     return
@@ -94,4 +139,5 @@ if __name__ == "__main__":
     get_all_tournaments()
     get_all_fantasy_tournaments()
     get_all_users()
+    get_all_wrestlers()
     sync_fantasy_tournament_data()
