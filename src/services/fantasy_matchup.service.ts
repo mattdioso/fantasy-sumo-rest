@@ -1,4 +1,4 @@
-import { getConnection } from "typeorm";
+import { FindOptionsWhere, getConnection } from "typeorm";
 import { FantasyMatchupEntity } from "../database/entities/fantasy_matchup.entity";
 import { FantasyMatchupRepository } from "../repository/fantasy_matchup.repository";
 import dataSource from '../database/ormconfig';
@@ -21,12 +21,12 @@ export class FantasyMatchupService {
         this.match_repository = dataSource.getRepository(MatchEntity);
     }
 
-    public index = async() => {
+    public index = async () => {
         const fantasy_matchups = await this.fantasy_matchup_repository.find();
         return fantasy_matchups;
     }
 
-    public get_fantasy_matchup = async(id: string) => {
+    public get_fantasy_matchup = async (id: string) => {
         let matchup = await this.fantasy_matchup_repository.findOne({
             where: {
                 id: id
@@ -35,17 +35,17 @@ export class FantasyMatchupService {
         return matchup;
     }
 
-    public create = async(matchup: FantasyMatchupEntity) => {
+    public create = async (matchup: FantasyMatchupEntity) => {
         const new_matchup = await this.fantasy_matchup_repository.create(matchup);
         let team1 = await this.team_repository.findOne({
             where: {
-                id: matchup.team1.id
-            }
+                id: matchup.team1
+            } as unknown as FindOptionsWhere<TeamEntity>
         });
         let team2 = await this.team_repository.findOne({
             where: {
-                id: matchup.team2.id
-            }
+                id: matchup.team2
+            } as unknown as FindOptionsWhere<TeamEntity>
         });
         new_matchup.team1 = team1!;
         new_matchup.team2 = team2!;
@@ -54,7 +54,7 @@ export class FantasyMatchupService {
         return new_matchup;
     }
 
-    public update = async(matchup: FantasyMatchupEntity, id: string) => {
+    public update = async (matchup: FantasyMatchupEntity, id: string) => {
         if (matchup.matches) {
             let new_matches = []
             for (let i = 0; i < matchup.matches.length; i++) {
@@ -64,11 +64,11 @@ export class FantasyMatchupService {
                     }
                 });
                 await dataSource.createQueryBuilder().relation(FantasyMatchupEntity, "matches")
-                .of(id)
-                .add(match)
+                    .of(id)
+                    .add(match)
                 matchup.matches[i] = match!;
             }
-            
+
         } else {
             await this.fantasy_matchup_repository.update(id, matchup);
         }
@@ -81,7 +81,7 @@ export class FantasyMatchupService {
         });
     }
 
-    public delete = async(id: string) => {
+    public delete = async (id: string) => {
         return await this.fantasy_matchup_repository.delete(id);
     }
 }

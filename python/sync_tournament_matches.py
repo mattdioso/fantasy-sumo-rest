@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import requests
+from requests.adapters import HTTPAdapter, Retry
 import json
 from bs4 import BeautifulSoup
 import datetime
@@ -16,13 +17,16 @@ SUMO_PROPERTY_DICT = {
     "Height and Weight": "height\tweight"
 }
 
+s = requests.Session()
+retries = Retry(total=3, backoff_factor=1, status_forcelist=[502, 503, 504])
+s.mount('http://', HTTPAdapter(max_retries=retries))
+
 def convert_date(date_string):
   d = datetime.datetime.strptime(date_string, '%B %d, %Y')
   return d.strftime('%Y-%m-%d')
 
 def create_wrestler(wrestler_name, href):
-    print(href)
-    page = requests.get(SUMODB_BASE_URL + href)
+    page = s.get(SUMODB_BASE_URL + href)
     soup = BeautifulSoup(page.content, 'html.parser')
     layoutright = soup.find_all(class_="layoutright")[0]
     rikshi_data = layoutright.find_all(class_="rikishidata")[0]
@@ -46,13 +50,13 @@ def create_wrestler(wrestler_name, href):
                 payload['familyname'] = family_name[0].upper() + family_name[1:].lower()
             elif cat == "Height and Weight":
                 [height, _, weight, _] = val.split(" ")
-                payload['weight'] = int(weight)
-                payload['height'] = int(height)
+                payload['weight'] = int(float(weight))
+                payload['height'] = int(float(height))
             elif cat == "Birth Date":
                 payload[SUMO_PROPERTY_DICT[cat]] = convert_date(val.split(" (")[0])
             else:
                 payload[SUMO_PROPERTY_DICT[cat]] = val
-    res = requests.post(BASE_URL + "/api/wrestlers", json=payload)
+    res = s.post(BASE_URL + "/api/wrestlers", json=payload)
     if res.status_code != 200:
         print(res.text)
     else:
@@ -65,7 +69,7 @@ def find_wrestler_id(wrestler):
     json_body = {
         "ringname": wrestler
     }
-    res = requests.post(search_url, json=json_body)
+    res = s.post(search_url, json=json_body)
     results = res.json()
     wrestler_id = ""
     for wrestler_json in results:
@@ -78,16 +82,16 @@ def find_technique_id(technique):
     json_body = {
         "technique": technique
     }
-    res = requests.post(search_url, json=json_body)
+    res = s.post(search_url, json=json_body)
     return res.json()['id']
 
 def check_match_exists(tournament_id, east_wrestler, west_wrestler, day):
-    tournament_matches_url = BASE_URL + "/api/matches"
-    res = requests.get(tournament_matches_url)
-    matches = res.json()    
-    day_matches = [m for m in matches if m.day == day]
-    exists = [d for d in day_matches if (d.wrestler1 == east_wrestler or d.wrestler1 == west_wrestler) and (d.wrestler2 == east_wrestler or d.wrestler2 == west_wrestler)]
-    print(len(exists) > 0)
+    tournament_matches_url = BASE_URL + "/api/tournaments/" + tournament_id + "/matches"
+    res = s.get(tournament_matches_url)
+    matches = res.json()
+    day_matches = [m for m in matches if m['day'] == day]
+    exists = [d for d in day_matches if (d['wrestler1']['id'] == east_wrestler or d['wrestler1']['id'] == west_wrestler) and (d['wrestler2']['id'] == east_wrestler or d['wrestler2']['id'] == west_wrestler)]
+    return [len(exists) > 0, exists[0]['id'] if len(exists) > 0 else ""]
 
 
 def create_match(east_id, east_win, west_id, west_win, technique_id, forfeit_one, forfeit_two, match_num, day, tournament_id):
@@ -105,12 +109,26 @@ def create_match(east_id, east_win, west_id, west_win, technique_id, forfeit_one
         "tournament": tournament_id
     }
     # check if match exists
-    #check_match_exists(tournament_id, east_id, west_id, day)
-    res = requests.post(match_url, json=match_body)
-    if res.status_code != 200:
-        print(res.text)
-        return ""
-    return res.json()['id']
+    [match_exists, match_id] = check_match_exists(tournament_id, east_id, west_id, day)
+    if match_exists:
+        #print("match exists, checking day...")
+        res = s.get(match_url + "/" + match_id)
+        m_data = res.json()
+        if m_data['day'] != day:
+            print('day is wrong, updating...')
+            match_body = {
+                "day": day
+            }
+            res = s.put(match_url + "/" + match_id, json=match_body).json()
+            print(res['id'] + "\t" + res['day'])
+    else:
+
+        res = s.post(match_url, json=match_body)
+        if res.status_code != 200:
+            print(res.text)
+            return ""
+        match_id = res.json()['id']
+    return match_id
 
 def process_tr(row, match_num, day_num, tournament_id):
     west_won = False
@@ -137,30 +155,30 @@ def process_tr(row, match_num, day_num, tournament_id):
     if east_won:
         if technique == "fusen":
             forfeit_one = 1
-        print("%s beat %s using %s" % (east_wrestler, west_wrestler, technique.text))
+        #print("%s beat %s using %s" % (east_wrestler, west_wrestler, technique.text))
         match_id = create_match(east_wrestler_id, True, west_wrestler_id, False, technique_id, forfeit_one, forfeit_two, match_num, day_num, tournament_id)
         return match_id
     else:
         if technique == "fusen":
             forfeit_two = 1
-        print("%s beat %s using %s" % (west_wrestler, east_wrestler, technique.text))
+        #print("%s beat %s using %s" % (west_wrestler, east_wrestler, technique.text))
         match_id = create_match(east_wrestler_id, False, west_wrestler_id, True, technique_id, forfeit_one, forfeit_two, match_num, day_num, tournament_id)
         return match_id
 
 def sync_matches():
-    res = requests.get(BASE_URL + "/api/tournaments")
+    res = s.get(BASE_URL + "/api/tournaments")
     ts = res.json()
     filtered_ts = [t for t in ts if t['matches'] == []]
-    for t in filtered_ts:
+    for t in ts:
         t_id = t['id']
-        res = requests.get(BASE_URL + "/api/tournaments/" + t_id)
+        res = s.get(BASE_URL + "/api/tournaments/" + t_id)
         t = res.json()
         month_year = t['month_year']
         [ month, year ] = month_year.split("-")
-        print(t_id + " " + month + " " + year)
+        print(t['name'] + " " + month + " " + year)
         matches = []
         for i in range(1, 16):
-            page = requests.get(MATCHES_URL.format(year=int(year), month=int(month), day=int(i)))
+            page = s.get(MATCHES_URL.format(year=int(year), month=int(month), day=int(i)))
             soup = BeautifulSoup(page.content, 'html.parser')
             layoutright = soup.find_all(class_="layoutright")[0]
             tables = layoutright.find_all(class_="tk_table")
@@ -171,12 +189,13 @@ def sync_matches():
                 for x in range(1, len(trs)):
                     match_id = process_tr(trs[x], len(matches), i, t_id)
                     if match_id != "":
-                        matches.append({ "id": match_id })
-        tournament_update = {
-            "matches": matches
-        }
-        res = requests.put(BASE_URL + "/api/tournaments/" + t_id, json=tournament_update)
-        print(res.json())
+                        # matches.append({ "id": match_id })
+                        tournament_update = {
+                            "matches": [ match_id ]
+                        }
+
+                        res = s.put(BASE_URL + "/api/tournaments/" + t_id, json=tournament_update)
+                        #print(res.text)
     print("done")
 
 

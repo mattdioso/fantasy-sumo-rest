@@ -12,7 +12,7 @@ export class FantasyMatchupController {
         this.routes();
     }
 
-    public index = async(req: Request, res: Response)=> {
+    public index = async (req: Request, res: Response) => {
         await this.fantasyMatchupService.index().then(tournaments => {
             return res.send(tournaments);
         }).catch(err => {
@@ -22,7 +22,7 @@ export class FantasyMatchupController {
         });
     }
 
-    public get_matchup = async(req: Request, res: Response) => {
+    public get_matchup = async (req: Request, res: Response) => {
         let id = req['params']['id'];
         await this.fantasyMatchupService.get_fantasy_matchup(id).then(matchup => {
             return res.send(matchup);
@@ -33,8 +33,9 @@ export class FantasyMatchupController {
         });
     }
 
-    public create = async(req: Request, res: Response) => {
+    public create = async (req: Request, res: Response) => {
         const tourney = req['body'] as FantasyMatchupEntity;
+        console.log(tourney)
         await this.fantasyMatchupService.create(tourney).then(new_matchup => {
             return res.send(new_matchup);
         }).catch(err => {
@@ -45,7 +46,7 @@ export class FantasyMatchupController {
         });
     }
 
-    public update = async(req: Request, res: Response) => {
+    public update = async (req: Request, res: Response) => {
         console.log(req['params']['id']);
         const tournament = req['body'] as FantasyMatchupEntity;
         console.log(tournament);
@@ -60,7 +61,7 @@ export class FantasyMatchupController {
         });
     }
 
-    public delete = async(req: Request, res: Response) => {
+    public delete = async (req: Request, res: Response) => {
         const id = req['params']['id'];
         await this.fantasyMatchupService.delete(id).then(() => {
             res.sendStatus(204);
