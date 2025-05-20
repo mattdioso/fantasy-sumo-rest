@@ -2,7 +2,7 @@
 import requests
 import json
 
-url = 'https://rest-api-dot-fantasy-sumo-409406.uw.r.appspot.com/api/fantasy_tournaments/2ea49be1-cd3c-424c-8cb2-e7c829e34104/matches'
+url = 'https://rest-api-dot-fantasy-sumo-409406.uw.r.appspot.com/api/fantasy_matchups'
 res = requests.get(url)
 j = res.json()
 

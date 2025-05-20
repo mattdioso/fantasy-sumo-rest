@@ -14,13 +14,21 @@ export class WrestlerService {
         this.searchService = new SearchService();
     }
 
-    public index = async () => {
-        return await this.wrestler_repository.find();
-        
+    public index = async (querySize: number = 50, skipCount: number = 0) => {
+
+        const [result, total] = await this.wrestler_repository.findAndCount({
+            take: querySize,
+            skip: skipCount
+        });
+        return {
+            data: result,
+            count: total
+        }
+
     }
 
     public get_wrestler = async (id: string) => {
-        let wrestler =  await this.wrestler_repository.findOne({
+        let wrestler = await this.wrestler_repository.findOne({
             where: {
                 id: id
             }
@@ -31,7 +39,7 @@ export class WrestlerService {
     public create = async (wrestler: WrestlerEntity) => {
         let ringname = wrestler['ringname'];
         const exists = await this.checkWrestlerExists(wrestler);
-        
+
         if (!exists) {
             const new_wrestler = await this.wrestler_repository.create(wrestler);
             //console.log(new_wrestler);
@@ -39,9 +47,9 @@ export class WrestlerService {
             //console.log(results);
             return new_wrestler;
         } else {
-            return {message: `${ringname} already exists`};
+            return { message: `${ringname} already exists` };
         }
-        
+
     }
 
     public update = async (wrestler: WrestlerEntity, id: string) => {
@@ -55,18 +63,18 @@ export class WrestlerService {
         return deleted_wrestler;
     }
 
-    public checkWrestlerExists = async (wrestler: WrestlerEntity) : Promise<Boolean> => {
+    public checkWrestlerExists = async (wrestler: WrestlerEntity): Promise<Boolean> => {
         let ringname = wrestler['ringname'];
         let ret = false;
         await this.searchService.search_wrestler(ringname).then(result => {
-            
+
             if (result.length > 0) {
-                for (let i = 0 ; i < result.length; i++) {
+                for (let i = 0; i < result.length; i++) {
                     if (result[i].ringname === ringname) {
-                        ret= true;
+                        ret = true;
                     }
                 }
-                
+
             }
         });
         //console.log(ret);

@@ -19,29 +19,39 @@ export class WrestlerController {
         this.routes();
     }
 
-    public index = async ( req: Request, res: Response) => {
-        await this.wrestlerService.index().then(wrestlers => {
-            return res.send(wrestlers);
+    public index = async (req: Request, res: Response) => {
+        const page = parseInt(req.query.page as string) || 1;
+        const pageSize = parseInt(req.query.pageSize as string) || 10;
+        const skip = (page - 1) * pageSize;
+        await this.wrestlerService.index(pageSize, skip).then((data) => {
+            return res.json({
+                data: data?.data,
+                total: data?.count,
+                page,
+                pageSize,
+                totalPages: (Math.ceil(data?.count / pageSize)),
+                hasMore: ((page - 1) * pageSize) < data?.count
+            })
         }).catch(err => {
             console.log(err);
-            return res.sendStatus(500).send({
-                message: err.message || "some error occured"
-            })
-        });   
-    }
-
-    public get_wrestler = async (req: Request, res: Response) => {
-        let id = req['params']['id'];
-        await this.wrestlerService.get_wrestler(id).then(wrestler => {
-            return res.send(wrestler);
-        }) .catch(err => {
             return res.sendStatus(500).send({
                 message: err.message || "some error occured"
             })
         });
     }
 
-    public get_wrestler_matches = async(req: Request, res: Response) => {
+    public get_wrestler = async (req: Request, res: Response) => {
+        let id = req['params']['id'];
+        await this.wrestlerService.get_wrestler(id).then(wrestler => {
+            return res.send(wrestler);
+        }).catch(err => {
+            return res.sendStatus(500).send({
+                message: err.message || "some error occured"
+            })
+        });
+    }
+
+    public get_wrestler_matches = async (req: Request, res: Response) => {
         let id = req['params']['id'];
         await this.matchService.get_wrestler_match(id).then(matches => {
             return res.send(matches);
@@ -64,7 +74,7 @@ export class WrestlerController {
                 message: err.message || "some error occured"
             })
         });
-        
+
     }
 
     public update = async (req: Request, res: Response) => {
@@ -77,7 +87,7 @@ export class WrestlerController {
                 message: err.message || "some error occured"
             })
         });
-        
+
     }
 
     public delete = async (req: Request, res: Response) => {
@@ -89,7 +99,7 @@ export class WrestlerController {
                 message: err.message || "some error occured"
             })
         });
-        
+
     }
 
     public search = async (req: Request, res: Response) => {
@@ -101,7 +111,7 @@ export class WrestlerController {
                 message: err.message || "some error occured"
             })
         });
-        
+
     }
 
     public avatar = async (req: Request, res: Response) => {
@@ -110,7 +120,7 @@ export class WrestlerController {
 
             let path = resolve(__dirname + `/../../python/sumo_pics/${wrestler!.ringname}.jpg`);
             return res.sendFile(path);
-        
+
         }).catch(err => {
             console.log(err)
             return res.sendStatus(500).send({
@@ -132,7 +142,7 @@ export class WrestlerController {
         });
     }
 
-    public search_wrestler_score = async(req: Request, res: Response) => {
+    public search_wrestler_score = async (req: Request, res: Response) => {
         const wrestler_id = req['body']['wrestler_id'];
         const tournament_id = req['body']['tournament_id'];
         const day_num = req['body']['day'] as number;

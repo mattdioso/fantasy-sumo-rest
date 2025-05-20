@@ -110,8 +110,6 @@ def create_matchup(matchup_data, teams, f_id, t_id):
     team2_name = matchup_data['team2']
     team1_id = [t for t in teams if t['teamname'] == team1_name][0]['id']
     team2_id = [t for t in teams if t['teamname'] == team2_name][0]['id']
-    print(team1_id)
-    print(team2_id)
     matchup_data['team1'] = team1_id
     matchup_data['team2'] = team2_id
     matches = []
@@ -143,11 +141,10 @@ def create_matchup(matchup_data, teams, f_id, t_id):
             if m['id'] not in matches_set:
                 matches.append(m)
                 matches_set.add(m['id'])
-    print(json.dumps(matchup_data))
     matchup_data['matches'] = matches
-    #res = s.post(matchup_url, json=matchup_data)
-    #return res.json()['id']
-    return ""
+    res = s.post(matchup_url, json=matchup_data)
+    return res.json()['id']
+    #return ""
     # get the teams
 
 
