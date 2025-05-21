@@ -20,12 +20,12 @@ export class TournamentService {
         this.match_repository = dataSource.getRepository(MatchEntity);
     }
 
-    public index = async() => {
+    public index = async () => {
         const tournaments = await this.tournament_repository.find();
         return tournaments;
     }
 
-    public get_tournament = async(id: string) => {
+    public get_tournament = async (id: string) => {
         let tournament = await this.tournament_repository.findOne({
             where: {
                 id: id
@@ -34,16 +34,29 @@ export class TournamentService {
         return tournament;
     }
 
-    public get_tournament_matches = async(id: string) => {
+    public get_tournament_matches = async (id: string) => {
         let tournament = await this.tournament_repository.findOne({
             where: {
                 id: id
             }
         });
         let res = this.match_repository.createQueryBuilder()
-                    .relation(TournamentEntity, "matches")
-                    .of(tournament).loadMany();
+            .relation(TournamentEntity, "matches")
+            .of(tournament).loadMany();
         return res;
+    }
+
+    public get_most_recent_tournament = async () => {
+        let tournament = await this.tournament_repository.find({
+            skip: 0,
+            take: 1,
+            order: {
+                dateend: "ASC"
+            }
+        }).catch((error) => {
+            console.error(error)
+        });
+        return tournament?.[0].id ?? "";
     }
 
     public create = async (tournament: TournamentEntity) => {
@@ -74,19 +87,19 @@ export class TournamentService {
                     }
                 });
                 await this.tournament_repository.createQueryBuilder()
-                        .relation(TournamentEntity, "matches")
-                        .of(id)
-                        .add(match).catch(err => {console.log(err)});
+                    .relation(TournamentEntity, "matches")
+                    .of(id)
+                    .add(match).catch(err => { console.log(err) });
             }
         }
-        return await this.tournament_repository.findOne({ 
+        return await this.tournament_repository.findOne({
             where: {
                 id: id
-            } 
+            }
         });
     }
 
-    public delete = async (id:string) => {
+    public delete = async (id: string) => {
         return await this.tournament_repository.delete(id);
     }
 }

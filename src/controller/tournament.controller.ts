@@ -12,18 +12,31 @@ export class TournamentController {
         this.routes();
     }
 
-    public index = async(req: Request, res: Response) => {
-        await this.tournamentService.index().then(tournaments => {
-            return res.send(tournaments);
-        }).catch(err => {
-            console.log(err);
-            return res.sendStatus(500).send({
-                message: err.message || "some error occured"
+    public index = async (req: Request, res: Response) => {
+        if (req.query.recent) {
+            await this.tournamentService.get_most_recent_tournament().then(id => {
+                return res.send({
+                    id
+                })
+            }).catch(err => {
+                console.log(err)
+                return res.sendStatus(500).send({
+                    message: err.message || "some error occured"
+                })
             })
-        });
+        } else {
+            await this.tournamentService.index().then(tournaments => {
+                return res.send(tournaments);
+            }).catch(err => {
+                console.log(err);
+                return res.sendStatus(500).send({
+                    message: err.message || "some error occured"
+                })
+            });
+        }
     }
 
-    public get_tournaent = async(req: Request, res: Response) => {
+    public get_tournaent = async (req: Request, res: Response) => {
         let id = req['params']['id'];
         await this.tournamentService.get_tournament(id).then(tournament => {
             return res.send(tournament);
@@ -35,7 +48,7 @@ export class TournamentController {
         });
     }
 
-    public get_tournament_matches = async(req: Request, res: Response) => {
+    public get_tournament_matches = async (req: Request, res: Response) => {
         let id = req['params']['id'];
         await this.tournamentService.get_tournament_matches(id).then(matches => {
             return res.send(matches);

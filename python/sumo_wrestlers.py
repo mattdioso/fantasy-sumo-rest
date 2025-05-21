@@ -1,11 +1,17 @@
 #!/usr/bin/env python3
-
 import requests
 from bs4 import BeautifulSoup
 import json
 import os
 import datetime
 from google.cloud import storage
+from requests.adapters import HTTPAdapter, Retry
+
+BASE_URL = "https://fantasy-sumo-rest-api-dot-fantasy-sumo-409406.uw.r.appspot.com"
+#BASE_URL = "http://localhost:8080"
+s = requests.Session()
+retries = Retry(total=3, backoff_factor=1, status_forcelist=[502, 503, 504])
+s.mount('http://', HTTPAdapter(max_retries=retries))
 
 def convert_date(date_string):
   d = datetime.datetime.strptime(date_string, '%B %d, %Y')
@@ -46,61 +52,76 @@ def upload_icon(uri, name):
   with open("./sumo_icons/" + name + '.jpg', 'wb') as file:
     file.write(page.content)
 
-def scrape_sumo_info(uri, name):
-  page = requests.get(base_url + uri, headers=sumo_headers)
-  soup = BeautifulSoup(page.content, 'html.parser')
-  body = soup.find(id="mainContent").find_all(class_="mdColSet1")
-  #print(body)
-  try:
-    img_uri = body[0].find("img")["src"]
-  except:
-    img_uri = ""
-  rows = body[0].find_all("tr")
-  ring_name = rows[0].find("td").text.replace('\n', '').strip()
-  family_name = rows[2].find("td").text.replace('\n', '').strip()
-  rank = rows[4].find("td").text.replace('\n', '').strip()
-  dob = rows[5].find("td").text.replace('\n', '').strip()
-  pob = rows[6].find("td").text.replace('\n', '').strip()
-  height = rows[7].find("td").text.replace('\n', '').strip()
-  weight = rows[8].find("td").text.replace('\n', '').strip()
-
-  dob = str(convert_date(dob))
-  height = strip_height(height)
-  weight = strip_weight(weight)
-  names = family_name.split(' ')
-  """
-  try:
-    print(ring_name.split(' ')[0] + "\tFamily Name: " + names[1]+ "\tGiven Name: " + names[0] + "\t"  + rank + "\t" + dob + "\t" + pob + "\t" + height + "\t" + weight)
-  except:
-    print("ERROR")
-    print(" ".join(names) + "\t" + ring_name)
-  """
-  if len(names) > 1:
-    familyname = names[1]
-    givenname = names[0]
-  else:
-    familyname = ""
-    givenname=""
-    print(ring_name.split(' ')[0] + "\tFamily Name: " + familyname+ "\tGiven Name: " + givenname + "\t"  + rank + "\t" + dob + "\t" + pob + "\t" + height + "\t" + weight)
-
-  post_data = {
-    "familyname": familyname,
-    "givenname": givenname,
-    "ringname": name,
-    "birthdate": dob,
-    "birthplace": pob,
-    "height": int(height),
-    "weight": int(weight),
-    "retired": False,
-    "avatar_store": "https://storage.googleapis.com/fantasy-sumo-409406.appspot.com/sumo_avatars/<ringname>.jpg".replace("<ringname>", name),
-    "icon_store": "https://storage.googleapis.com/fantasy-sumo-409406.appspot.com/sumo_icons/<ringname>_icon.jpg".replace("<ringname>", name)
+def check_wrestler_exists(name):
+  search_url = BASE_URL + "/api/wrestlers/search"
+  payload = {
+    "ringname": name
   }
+  res = s.post(search_url, json=payload)
+  return len(res.json()) > 0, res.json()[0]['id'] if len(res.json()) > 0 else ""
 
-  response = requests.post('https://fantasy-sumo-rest-api-dot-fantasy-sumo-409406.uw.r.appspot.com/api/wrestlers', json=post_data)
-  print(response.text)
-  if not "exists" in response.text and img_uri != "":
-    upload_avatar(img_uri, name)
-    upload_icon(img_uri, name)
+def scrape_sumo_info(uri, name):
+  wrestler_exists, w_id = check_wrestler_exists(name)
+  if not wrestler_exists:
+    page = requests.get(base_url + uri, headers=sumo_headers)
+    soup = BeautifulSoup(page.content, 'html.parser')
+    body = soup.find(id="mainContent").find_all(class_="mdColSet1")
+    #print(body)
+    try:
+      img_uri = body[0].find("img")["src"]
+    except:
+      img_uri = ""
+    rows = body[0].find_all("tr")
+    ring_name = rows[0].find("td").text.replace('\n', '').strip()
+    family_name = rows[2].find("td").text.replace('\n', '').strip()
+    rank = rows[4].find("td").text.replace('\n', '').strip()
+    dob = rows[5].find("td").text.replace('\n', '').strip()
+    pob = rows[6].find("td").text.replace('\n', '').strip()
+    height = rows[7].find("td").text.replace('\n', '').strip()
+    weight = rows[8].find("td").text.replace('\n', '').strip()
+
+    dob = str(convert_date(dob))
+    height = strip_height(height)
+    weight = strip_weight(weight)
+    names = family_name.split(' ')
+
+    if len(names) > 1:
+      familyname = names[1]
+      givenname = names[0]
+    else:
+      familyname = ""
+      givenname=""
+      print(ring_name.split(' ')[0] + "\tFamily Name: " + familyname+ "\tGiven Name: " + givenname + "\t"  + rank + "\t" + dob + "\t" + pob + "\t" + height + "\t" + weight)
+
+    post_data = {
+      "familyname": familyname,
+      "givenname": givenname,
+      "ringname": name,
+      "birthdate": dob,
+      "birthplace": pob,
+      "height": int(height),
+      "weight": int(weight),
+      "retired": False,
+      "avatar_store": "https://storage.googleapis.com/fantasy-sumo-409406.appspot.com/sumo_avatars/<ringname>.jpg".replace("<ringname>", name),
+      "icon_store": "https://storage.googleapis.com/fantasy-sumo-409406.appspot.com/sumo_icons/<ringname>_icon.jpg".replace("<ringname>", name)
+    }
+
+    response = requests.post('https://fantasy-sumo-rest-api-dot-fantasy-sumo-409406.uw.r.appspot.com/api/wrestlers', json=post_data)
+    print(response.text)
+    if not "exists" in response.text and img_uri != "":
+      upload_avatar(img_uri, name)
+      upload_icon(img_uri, name)
+  else:
+    wrestler_url = BASE_URL + "/api/wrestlers/" + w_id
+    res = s.get(wrestler_url)
+    payload = {}
+    if 'avatar_store' not in res or res['avatar_store'] is None:
+      payload['avatar_store'] = "https://storage.googleapis.com/fantasy-sumo-409406.appspot.com/sumo_avatars/<ringname>.jpg".replace("<ringname>", name)
+    if 'icon_store' not in res or res['icon_store'] is None:
+      payload['icon_store'] = "https://storage.googleapis.com/fantasy-sumo-409406.appspot.com/sumo_icons/<ringname>_icon.jpg".replace("<ringname>", name)
+    if len(payload) > 0:
+      res = s.put(wrestler_url, json=payload)
+      print(res.text)
 
 if not os.path.exists('./sumo_pics'):
   os.makedirs('./sumo_pics')
