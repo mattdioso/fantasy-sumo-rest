@@ -30,7 +30,7 @@ export class WrestlerController {
                 page,
                 pageSize,
                 totalPages: (Math.ceil(data?.count / pageSize)),
-                hasMore: ((page - 1) * pageSize) < data?.count
+                hasMore: ((page) * pageSize) < data?.count
             })
         }).catch(err => {
             console.log(err);
